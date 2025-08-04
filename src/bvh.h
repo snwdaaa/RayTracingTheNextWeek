@@ -79,6 +79,7 @@ public:
 	// hittable 객체의 bounding_box() 메서드로 aabb 객체를 가져온 후
 	// aabb 객체의 get_axis_interval() 메서드로 가장 긴 축의 interval을 가져옴
 	// 그리고 그 interval의 min을 기준으로 정렬
+	// 정리하자면, 각 물체의 bbox 최소점의 좌표 기준으로 정렬
 	auto interval_comp = [&]( // 람다 표현식
 	    shared_ptr<hittable> obj_a,
 	    shared_ptr<hittable> obj_b

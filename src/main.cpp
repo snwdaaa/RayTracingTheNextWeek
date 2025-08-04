@@ -231,6 +231,11 @@ void cornell_box(hittable_list& world, camera& cam) {
 	vec3(10, 10, 10)
     );
 
+    auto sphere_center1 = point3(-1, 0.5, 0);
+    auto sphere_center2 = sphere_center1 + vec3(random_double(0, 0.5), random_double(0, 1), 0);
+    world.add(make_shared<sphere>(sphere_center1, sphere_center2, 
+	0.2, material_lambertian));
+
     cam.lookfrom = point3(0, 0, 3);
     cam.lookat = point3(0, 0, 0);
 
@@ -241,8 +246,8 @@ int main() {
     // 카메라
     camera cam;
     cam.aspect_ratio = 16.0 / 9.0;
-    cam.image_width = 1024;
-    cam.samples_per_pixel = 10;
+    cam.image_width = 2048;
+    cam.samples_per_pixel = 100;
     cam.max_depth = 10;
 
     cam.vfov = 70;

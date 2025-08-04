@@ -6,20 +6,38 @@
 // 구 클래스
 class sphere : public hittable {
 private:
-    point3 center;
+    ray center;
     double radius;
     shared_ptr<material> mat;
     aabb bbox;
 public:
-    sphere(const point3& center, double radius, shared_ptr<material> mat) 
-        : center(center), radius(std::fmax(0, radius)), mat(mat) 
+    // 정적인 Sphere
+    sphere(const point3& static_center, double radius, shared_ptr<material> mat) 
+        : center(static_center, vec3(0, 0, 0)), 
+        radius(std::fmax(0, radius)),
+        mat(mat) 
     {
         auto rvec = vec3(radius, radius, radius);
-        bbox = aabb(center - rvec, center + rvec);
+        //bbox = aabb(center - rvec, center + rvec);
+        auto ray_origin = center.origin();
+        bbox = aabb(ray_origin - rvec, ray_origin + rvec);
+    }
+
+    // 움직이는 Sphere
+    sphere(const point3& center1, const point3& center2, double radius,
+        shared_ptr<material> mat)
+        : center(center1, center2 - center1),
+        radius(std::fmax(0, radius)),
+        mat(mat)
+    {
+        auto rvec = vec3(radius, radius, radius);
+        bbox = aabb(center1 - rvec, center2 + rvec);
     }
 
     bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
-        vec3 oc = center - r.origin(); // C-Q
+        // 구의 중심을 입력받은 레이가 부딪히는 시점의 시각 값으로 구함
+        point3 current_center = center.at(r.time());
+        vec3 oc = current_center - r.origin(); // C-Q
         auto a = r.direction().length_squared(); // d dot d == |d|^2
         auto h = dot(r.direction(), oc); // h = d dot (C-Q)
         auto c = oc.length_squared() - radius * radius; // (C-Q) dot (C-Q) - r^2 = |(C-Q)|^2 - r^2
@@ -43,7 +61,7 @@ public:
         rec.t = root;
         rec.p = r.at(rec.t);
         rec.mat = mat;
-        vec3 outward_normal = (rec.p - center) / radius;
+        vec3 outward_normal = (rec.p - current_center) / radius;
         rec.set_face_normal(r, outward_normal); // 법선 벡터 방향 결정
 
         return true; // 충돌 O

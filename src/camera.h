@@ -124,7 +124,8 @@ private:
 	// 1 초과하면 레이 시작 지점이 렌즈 디스크 임의의 한 점
 	auto ray_origin = (defocus_angle <= 0) ? center : defocus_disk_sample();
 	auto ray_direction = pixel_sample - ray_origin; // 샘플링 지점으로
-	return ray(ray_origin, ray_direction);
+	auto ray_time = random_double(); // [0, 1] 범위 랜덤 시간으로 레이 생성
+	return ray(ray_origin, ray_direction, ray_time);
     }
 
     vec3 sample_square() const {

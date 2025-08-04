@@ -49,7 +49,7 @@ public:
 	    scattered_dir = rec.normal;
 	}
 
-	scattered = ray(rec.p, scattered_dir);
+	scattered = ray(rec.p, scattered_dir, r_in.time());
 	attenuation = albedo;
 	return true;
     }
@@ -69,7 +69,7 @@ public:
 	vec3 reflected = reflect(r_in.direction(), rec.normal);
 	// 완벽한 반사 방향 벡터에 fuzz만큼의 무작위 벡터 더함
 	reflected = unit_vector(reflected) + (fuzz * random_unit_vector());
-	scattered = ray(rec.p, reflected);
+	scattered = ray(rec.p, reflected, r_in.time());
 	attenuation = albedo;
 	return (dot(scattered.direction(), rec.normal) > 0);
     }
@@ -112,7 +112,7 @@ public:
 	    direction = refract(unit_direction, rec.normal, ri); // 굴절
 	}
 
-	scattered = ray(rec.p, direction); // 굴절된 방향으로 레이 발사
+	scattered = ray(rec.p, direction, r_in.time()); // 굴절된 방향으로 레이 발사
 
 	// (임시) 무조건 굴절 하게 하기
 	return true;
