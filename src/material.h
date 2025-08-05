@@ -2,6 +2,7 @@
 #define MATERIAL_H
 
 #include "hittable.h"
+#include "texture.h"
 
 // 레이와 부딪혔을 때 모든 머티리얼의 역할
 // 1. 산란광(scattered light) 만들기
@@ -25,9 +26,11 @@ public:
 // Lambertian(diffuse) reflectance
 class lambertian : public material{
 private:
-    color albedo; // 물체 고유의 색 or 반사율
+    //color albedo; // 물체 고유의 색 or 반사율
+    shared_ptr<texture> tex;
 public:
-    lambertian(const color& albedo) : albedo(albedo) {}
+    lambertian(const color& albedo) : tex(make_shared<solid_color>(albedo)) {}
+    lambertian(shared_ptr<texture> tex) : tex(tex) {}
 
     // Diffuse Scatter
     bool scatter(const ray& r_in, const hit_record& rec, color& attenuation,
@@ -50,7 +53,7 @@ public:
 	}
 
 	scattered = ray(rec.p, scattered_dir, r_in.time());
-	attenuation = albedo;
+	attenuation = tex->value(rec.u, rec.v, rec.p);
 	return true;
     }
 };

@@ -10,6 +10,22 @@ private:
     double radius;
     shared_ptr<material> mat;
     aabb bbox;
+
+    // 구면 좌표계의 좌표를 uv 좌표계의 좌표로 변환
+    static void get_sphere_uv(const point3& p, double& u, double& v) {
+        // p: 원점이 중심인 단위 구 위의 한 점
+        // u: x=-1부터 y축을 두르면서(가로) 생기는 각 (범위: [0,1])
+        // v: y=-1부터 y=1 사이의(세로) 각 (범위: [0,1])
+        //     <1 0 0> yields <0.50 0.50>       <-1  0  0> yields <0.00 0.50>
+        //     <0 1 0> yields <0.50 1.00>       < 0 -1  0> yields <0.50 0.00>
+        //     <0 0 1> yields <0.25 0.50>       < 0  0 -1> yields <0.75 0.50>
+
+        auto theta = std::acos(-p.y());
+        auto phi = std::atan2(-p.z(), p.x()) + pi;
+
+        u = phi / (2 * pi);
+        v = theta / pi;
+    }
 public:
     // 정적인 Sphere
     sphere(const point3& static_center, double radius, shared_ptr<material> mat) 
@@ -63,6 +79,7 @@ public:
         rec.mat = mat;
         vec3 outward_normal = (rec.p - current_center) / radius;
         rec.set_face_normal(r, outward_normal); // 법선 벡터 방향 결정
+        get_sphere_uv(outward_normal, rec.u, rec.v);
 
         return true; // 충돌 O
     }

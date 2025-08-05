@@ -11,6 +11,7 @@
 #include "image_opener.h"
 #include "camera.h"
 #include "material.h"
+#include "texture.h"
 
 void scene1(hittable_list& world, camera& cam) {
     // 물체에 사용할 머티리얼
@@ -235,6 +236,15 @@ void cornell_box(hittable_list& world, camera& cam) {
     auto sphere_center2 = sphere_center1 + vec3(random_double(0, 0.5), random_double(0, 1), 0);
     world.add(make_shared<sphere>(sphere_center1, sphere_center2, 
 	0.2, material_lambertian));
+
+    auto earth_texture = make_shared<image_texture>("earthmap.jpg");
+    auto earth_material = make_shared<lambertian>(earth_texture);
+
+    world.add(make_shared<sphere>(
+	point3(0.6, -0.5, 0.7), 
+	0.4,
+	earth_material
+    ));
 
     cam.lookfrom = point3(0, 0, 3);
     cam.lookat = point3(0, 0, 0);

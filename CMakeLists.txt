@@ -60,8 +60,8 @@ set ( SOURCE_NEXT_WEEK
   #src/constant_medium.h
   #src/perlin.h
   #src/quad.h
-  #src/rtw_stb_image.h
-  #src/texture.h
+  src/rtw_stb_image.h
+  src/texture.h
 )
 
 #set ( SOURCE_REST_OF_YOUR_LIFE
