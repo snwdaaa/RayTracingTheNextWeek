@@ -27,6 +27,8 @@ void scene1(hittable_list& world, camera& cam) {
     world.add(make_shared<sphere>(point3(-1.0, 0.0, 0.8), 0.3, material_left));
     world.add(make_shared<sphere>(point3(-1.0, 0.0, 0.8), 0.5, material_bubble));
     world.add(make_shared<sphere>(point3(1.0, 0.0, 0.8), 0.5, material_right));
+
+    cam.background = color(0.70, 0.80, 1.00);
 }
 // 카메라 테스트 1
 void scene2(hittable_list& world, camera& cam) {
@@ -37,6 +39,8 @@ void scene2(hittable_list& world, camera& cam) {
 
     world.add(make_shared<sphere>(point3(-R, 0, -1), R, material_left));
     world.add(make_shared<sphere>(point3(R, 0, -1), R, material_right));
+
+    cam.background = color(0.70, 0.80, 1.00);
 }
 
 // 삼각형 테스트
@@ -68,6 +72,7 @@ void scene3(hittable_list& world, camera& cam) {
 
     cam.lookfrom = point3(0, 0, 2); // scene 3
     cam.lookat = point3(0, 0, 0);
+    cam.background = color(0.70, 0.80, 1.00);
 }
 
 // 폴리곤 메시 테스트
@@ -108,6 +113,7 @@ void scene4(hittable_list& world, camera& cam) {
 
     cam.lookfrom = point3(0, 4, 6);
     cam.lookat = point3(0, 0, 0);
+    cam.background = color(0.70, 0.80, 1.00);
 }
 
 // Triangle 개수에 따른 렌더 시간 테스트
@@ -134,6 +140,7 @@ void scene5(hittable_list& world, camera& cam) {
 
     cam.lookfrom = point3(0, 5, 3); // scene 5
     cam.lookat = point3(0, 4, 0);
+    cam.background = color(0.70, 0.80, 1.00);
 }
 
 void scene6(hittable_list& world, camera& cam) {
@@ -147,6 +154,7 @@ void scene6(hittable_list& world, camera& cam) {
 	point3(0, 4, 0),
 	vec3(0.1, 0.1, 0.1)
     );
+    cam.background = color(0.70, 0.80, 1.00);
 }
 
 // Quads
@@ -168,6 +176,7 @@ void scene7(hittable_list& world, camera& cam) {
     cam.vfov = 80;
     cam.lookfrom = point3(0, 0, 9);
     cam.lookat = point3(0, 0, 0);
+    cam.background = color(0.70, 0.80, 1.00);
 
     cam.defocus_angle = 0;
 }
@@ -178,11 +187,14 @@ void cornell_box(hittable_list& world, camera& cam) {
     std::string back_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/cornell_box/back.obj";
     std::string floor_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/cornell_box/floor.obj";
     std::string ceil_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/cornell_box/ceil.obj";
+    std::string emit_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/cornell_box/emit.obj";
 
     auto mat_red = make_shared<lambertian>(color(1.0, 0.0, 0.0));
     auto mat_green = make_shared<lambertian>(color(0.0, 1.0, 0.0));
     auto mat_blue = make_shared<lambertian>(color(0.0, 0.0, 1.0));
     auto mat_white = make_shared<lambertian>(color(1.0, 1.0, 1.0));
+    // 조명
+    auto mat_light = make_shared<diffuse_light>(color(15, 15, 15));
 
     auto left = make_shared<polygon_mesh>(
 	left_path,
@@ -222,6 +234,14 @@ void cornell_box(hittable_list& world, camera& cam) {
 	world,
 	point3(0, 0, 0),
 	vec3(0.01, 0.01, 0.01)
+    );
+
+    auto emit = make_shared<polygon_mesh>(
+	emit_path,
+	mat_light,
+	world,
+	point3(0, 3.9, 0),
+	vec3(0.005, -0.01, 0.005)
     );
 
     std::string bunny_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/stanford-bunny.obj";
@@ -283,6 +303,7 @@ int main() {
     cam.image_width = 2048;
     cam.samples_per_pixel = 100;
     cam.max_depth = 10;
+    cam.background = color(0, 0, 0);
 
     cam.vfov = 70;
     cam.lookfrom = point3(0, 5, 20); // scene 5
@@ -296,7 +317,7 @@ int main() {
     hittable_list world; // 모든 hittable한 오브젝트를 저장
 
     // 불러올 씬
-    scene7(world, cam);
+    cornell_box(world, cam);
 
     // BVH
     world = hittable_list(make_shared<bvh_node>(world));

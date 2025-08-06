@@ -21,6 +21,11 @@ public:
     ) const {
 	return false;
     }
+
+    // 물체가 방출하는 빛
+    virtual color emitted(double u, double v, const point3& p) const {
+	return color(0, 0, 0);
+    }
 };
 
 // Lambertian(diffuse) reflectance
@@ -119,6 +124,18 @@ public:
 
 	// (임시) 무조건 굴절 하게 하기
 	return true;
+    }
+};
+
+class diffuse_light : public material {
+private:
+    shared_ptr<texture> tex;
+public:
+    diffuse_light(shared_ptr<texture> tex) : tex(tex) {}
+    diffuse_light(const color& emit) : tex(make_shared<solid_color>(emit)) {}
+
+    color emitted(double u, double v, const point3& p) const override {
+	return tex->value(u, v, p);
     }
 };
 

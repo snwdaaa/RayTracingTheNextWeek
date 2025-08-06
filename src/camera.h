@@ -92,22 +92,28 @@ private:
 
 	hit_record rec;
 
-	// 물체에 충돌한 경우
-	if (world.hit(r, interval(0.0001, infinity), rec)) {
-	    ray scattered;
-	    color attenuation;
-	    if (rec.mat->scatter(r, rec, attenuation, scattered)) {
-		return attenuation * ray_color(scattered, depth - 1, world);
-	    }
-	    return color(0, 0, 0);
-	}
+	// 레이가 아무 물체에도 충돌하지 않으면 배경색 리턴
+	if (!world.hit(r, interval(0.0001, infinity), rec))
+	    return background;
 
-	// 물체에 충돌하지 않은 경우 배경색 그림
-	vec3 unit_direction = unit_vector(r.direction());
-	auto a = 0.5 * (unit_direction.y() + 1.0);
-	// lerp
-	// a가 1이면 하늘색 (0.5, 0.7, 1.0), 0이면 흰색, 그 사이는 blend
-	return (1.0 - a) * color(1.0, 1.0, 1.0) + a * color(0.5, 0.7, 1.0);
+	ray scattered;
+	color attenuation;
+	// 방출된 빛
+	// 부딪힌 지점의 재질에서 emitted 함수 호출해
+	// 물체 자체가 내는 빛의 색을 가져옴
+	color color_from_emission = rec.mat->emitted(rec.u, rec.v, rec.p);
+
+	// 만약 물체가 빛을 반사하지 않으면
+	// 방출된 빛 그대로 표시
+	if (!rec.mat->scatter(r, rec, attenuation, scattered))
+	    return color_from_emission;
+
+	// 재질이 빛을 반사한다면, 재귀적으로 ray_color 호출해
+	// 반사된 광선이 가져오는 빛의 색 계산
+	color color_from_scatter = attenuation * ray_color(scattered, depth - 1, world);
+
+	// 방출된 빛과 반사된 빛을 더해 최종 색상 결정
+	return color_from_scatter + color_from_emission;
     }
 
     ray get_ray(int i, int j) const {
@@ -146,6 +152,7 @@ public:
     int samples_per_pixel = 10; // 픽셀 당 랜덤 샘플 개수
     int max_depth = 10; // 레이 반사 재귀호출 최대 depth
     double vfov = 90; // 수직 시야각 (Field of View)
+    color background; // 씬 배경 색상
 
     point3 lookfrom; // 카메라의 위치
     point3 lookat; // 카메라가 바라보는 곳
