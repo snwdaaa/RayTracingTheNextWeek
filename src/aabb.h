@@ -6,18 +6,31 @@ class aabb {
 private:
     interval x, y, z; // 각 축의 interval
 
+    // Quad는 한 차원의 두께가 0이 될 수 있으므로
+    // 두께가 델타보다 작은 경우 padding을 추가
+    void pad_to_minimums() {
+	double delta = 0.0001; // 두께 최소값
+	if (x.size() < delta) x = x.expand(delta);
+	if (y.size() < delta) y = y.expand(delta);
+	if (z.size() < delta) z = z.expand(delta);
+    }
 public:
     aabb() {}
 
     // 생성자 - 3개의 interval을 받음
     aabb(const interval& x, const interval& y, const interval& z)
-	: x(x), y(y), z(z) { }
+	: x(x), y(y), z(z)
+    {
+	pad_to_minimums();
+    }
 
     // 생성자 - 바운딩 박스의 양 끝 점을 받아 각 축의 interval 계산
     aabb(const point3& a, const point3& b) {
 	x = (a[0] < b[0]) ? interval(a[0], b[0]) : interval(b[0], a[0]);
 	y = (a[1] < b[1]) ? interval(a[1], b[1]) : interval(b[1], a[1]);
 	z = (a[2] < b[2]) ? interval(a[2], b[2]) : interval(b[2], a[2]);
+
+	pad_to_minimums();
     }
 
     // 생성자 - 두 바운딩 박스를 모두 포함하는 새로운 바운딩 박스

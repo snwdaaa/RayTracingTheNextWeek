@@ -59,7 +59,7 @@ set ( SOURCE_NEXT_WEEK
   src/scene_info.cpp
   #src/constant_medium.h
   #src/perlin.h
-  #src/quad.h
+  src/quad.h
   src/rtw_stb_image.h
   src/texture.h
 )

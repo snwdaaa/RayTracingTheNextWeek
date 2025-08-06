@@ -8,6 +8,7 @@
 #include "sphere.h"
 #include "triangle.h"
 #include "polygon_mesh.h"
+#include "quad.h"
 #include "image_opener.h"
 #include "camera.h"
 #include "material.h"
@@ -148,6 +149,29 @@ void scene6(hittable_list& world, camera& cam) {
     );
 }
 
+// Quads
+void scene7(hittable_list& world, camera& cam) {
+    // Materials
+    auto left_red = make_shared<lambertian>(color(1.0, 0.2, 0.2));
+    auto back_green = make_shared<lambertian>(color(0.2, 1.0, 0.2));
+    auto right_blue = make_shared<lambertian>(color(0.2, 0.2, 1.0));
+    auto upper_orange = make_shared<lambertian>(color(1.0, 0.5, 0.0));
+    auto lower_teal = make_shared<lambertian>(color(0.2, 0.8, 0.8));
+
+    // Quads
+    world.add(make_shared<quad>(point3(-3, -2, 5), vec3(0, 0, -4), vec3(0, 4, 0), left_red));
+    world.add(make_shared<quad>(point3(-2, -2, 0), vec3(4, 0, 0), vec3(0, 4, 0), back_green));
+    world.add(make_shared<quad>(point3(3, -2, 1), vec3(0, 0, 4), vec3(0, 4, 0), right_blue));
+    world.add(make_shared<quad>(point3(-2, 3, 1), vec3(4, 0, 0), vec3(0, 0, 4), upper_orange));
+    world.add(make_shared<quad>(point3(-2, -3, 5), vec3(4, 0, 0), vec3(0, 0, -4), lower_teal));
+
+    cam.vfov = 80;
+    cam.lookfrom = point3(0, 0, 9);
+    cam.lookat = point3(0, 0, 0);
+
+    cam.defocus_angle = 0;
+}
+
 void cornell_box(hittable_list& world, camera& cam) {
     std::string left_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/cornell_box/left.obj";
     std::string right_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/cornell_box/right.obj";
@@ -272,7 +296,7 @@ int main() {
     hittable_list world; // 모든 hittable한 오브젝트를 저장
 
     // 불러올 씬
-    cornell_box(world, cam);
+    scene7(world, cam);
 
     // BVH
     world = hittable_list(make_shared<bvh_node>(world));
