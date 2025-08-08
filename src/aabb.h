@@ -4,8 +4,6 @@
 // 자식 노드 또는 primitive를 감싸는 Axis-Aligned Bounding Box
 class aabb {
 private:
-    interval x, y, z; // 각 축의 interval
-
     // Quad는 한 차원의 두께가 0이 될 수 있으므로
     // 두께가 델타보다 작은 경우 padding을 추가
     void pad_to_minimums() {
@@ -15,6 +13,8 @@ private:
 	if (z.size() < delta) z = z.expand(delta);
     }
 public:
+    interval x, y, z; // 각 축의 interval
+
     aabb() {}
 
     // 생성자 - 3개의 interval을 받음
@@ -107,5 +107,13 @@ public:
 	return true;
     }
 };
+
+aabb operator+(const aabb& bbox, const vec3& offset) {
+    return aabb(bbox.x + offset.x(), bbox.y + offset.y(), bbox.z + offset.z());
+}
+
+aabb operator+(const vec3& offset, const aabb& bbox) {
+    return bbox + offset;
+}
 
 #endif

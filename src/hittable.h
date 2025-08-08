@@ -34,4 +34,31 @@ public:
     virtual aabb bounding_box() const = 0;
 };
 
+class translate : public hittable {
+public:
+    translate(shared_ptr<hittable> object, const vec3& offset)
+        : object(object), offset(offset)
+    {
+        bbox = object->bounding_box() + offset;
+    }
+
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
+        // Ray를 Offset만큼 뒤로 이동시킴
+        ray offset_ray(r.origin() - offset, r.direction(), r.time());
+
+        // 만약 충돌하지 않았다면 false
+        if (!object->hit(offset_ray, ray_t, rec))
+            return false;
+
+        // 충돌했다면 충돌 지점 정보에 offset을 더함
+        rec.p += offset;
+        return true;
+    }
+
+    aabb bounding_box() const override { return bbox; }
+private:
+    shared_ptr<hittable> object;
+    vec3 offset;
+    aabb bbox;
+};
 #endif

@@ -141,6 +141,7 @@
     <ClInclude Include="..\src\hittable_list.h" />
     <ClInclude Include="..\src\image_opener.h" />
     <ClInclude Include="..\src\interval.h" />
+    <ClInclude Include="..\src\mat4.h" />
     <ClInclude Include="..\src\material.h" />
     <ClInclude Include="..\src\polygon_mesh.h" />
     <ClInclude Include="..\src\quad.h" />

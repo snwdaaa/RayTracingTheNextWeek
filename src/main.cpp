@@ -15,6 +15,67 @@
 #include "material.h"
 #include "texture.h"
 
+void cornell_box(hittable_list& world, camera& cam) {
+    auto mat_red = make_shared<lambertian>(color(1.0, 0.0, 0.0));
+    auto mat_green = make_shared<lambertian>(color(0.0, 1.0, 0.0));
+    auto mat_blue = make_shared<lambertian>(color(0.0, 0.0, 1.0));
+    auto mat_white = make_shared<lambertian>(color(1.0, 1.0, 1.0));
+    auto mat_light = make_shared<diffuse_light>(color(15, 15, 15));
+
+    // left
+    world.add(make_shared<quad>(
+	point3(-2, -2, 2),
+	vec3(0, 0, -4),
+	vec3(0, 4, 0),
+	mat_red
+    ));
+
+    // right
+    world.add(make_shared<quad>(
+	point3(2, -2, 2),
+	vec3(0, 0, -4),
+	vec3(0, 4, 0),
+	mat_green
+    ));
+
+    // floor
+    world.add(make_shared<quad>(
+	point3(-2, -2, 2),
+	vec3(4, 0, 0),
+	vec3(0, 0, -4),
+	mat_white
+    ));
+
+    // ceil
+    world.add(make_shared<quad>(
+	point3(-2, 2, 2),
+	vec3(4, 0, 0),
+	vec3(0, 0, -4),
+	mat_white
+    ));
+
+    // back
+    world.add(make_shared<quad>(
+	point3(-2, -2, -2),
+	vec3(4, 0, 0),
+	vec3(0, 4, 0),
+	mat_white
+    ));
+
+    // emit
+    world.add(make_shared<quad>(
+	point3(-0.5, 1.99, -.25),
+	vec3(1.0, 0, 0),
+	vec3(0, 0, -1.0),
+	mat_light
+    ));
+
+    cam.lookfrom = point3(0, 0, 5);
+    cam.lookat = point3(0, 0, 0);
+
+    cam.defocus_angle = 0; // disable DOF
+}
+
 void scene1(hittable_list& world, camera& cam) {
     // 물체에 사용할 머티리얼
     auto material_ground = make_shared<lambertian>(color(0.8, 0.8, 0.0));
@@ -187,60 +248,8 @@ void scene7(hittable_list& world, camera& cam) {
     cam.defocus_angle = 0;
 }
 
-void cornell_box1(hittable_list& world, camera& cam) {
-    auto mat_red = make_shared<lambertian>(color(1.0, 0.0, 0.0));
-    auto mat_green = make_shared<lambertian>(color(0.0, 1.0, 0.0));
-    auto mat_blue = make_shared<lambertian>(color(0.0, 0.0, 1.0));
-    auto mat_white = make_shared<lambertian>(color(1.0, 1.0, 1.0));
-    auto mat_light = make_shared<diffuse_light>(color(15, 15, 15));
-
-    // left
-    world.add(make_shared<quad>(
-	point3(-2, -2, 2),
-	vec3(0, 0, -4),
-	vec3(0, 4, 0),
-	mat_red
-    ));
-
-    // right
-    world.add(make_shared<quad>(
-	point3(2, -2, 2),
-	vec3(0, 0, -4),
-	vec3(0, 4, 0),
-	mat_green
-    ));
-
-    // floor
-    world.add(make_shared<quad>(
-	point3(-2, -2, 2),
-	vec3(4, 0, 0),
-	vec3(0, 0, -4),
-	mat_white
-    ));
-
-    // ceil
-    world.add(make_shared<quad>(
-	point3(-2, 2, 2),
-	vec3(4, 0, 0),
-	vec3(0, 0, -4),
-	mat_white
-    ));
-
-    // back
-    world.add(make_shared<quad>(
-	point3(-2, -2, -2),
-	vec3(4, 0, 0),
-	vec3(0, 4, 0),
-	mat_white
-    ));
-
-    // emit
-    world.add(make_shared<quad>(
-	point3(-0.5, 1.95, -.25),
-	vec3(1.0, 0, 0),
-	vec3(0, 0, -1.0),
-	mat_light
-    ));
+void scene8(hittable_list& world, camera& cam) {
+    cornell_box(world, cam);
 
     std::string bunny_path = "../res/stanford-bunny.obj";
     std::string teapot_path = "../res/teapot.obj";
@@ -279,99 +288,43 @@ void cornell_box1(hittable_list& world, camera& cam) {
 
     auto sphere_center1 = point3(-1, 0.5, 0);
     auto sphere_center2 = sphere_center1 + vec3(random_double(0, 0.5), random_double(0, 1), 0);
-    world.add(make_shared<sphere>(sphere_center1, sphere_center2, 
+    world.add(make_shared<sphere>(sphere_center1, sphere_center2,
 	0.2, material_lambertian));
 
     auto earth_texture = make_shared<image_texture>("earthmap.jpg");
     auto earth_material = make_shared<lambertian>(earth_texture);
 
     world.add(make_shared<sphere>(
-	point3(0.6, -0.5, 0.7), 
+	point3(0.6, -0.5, 0.7),
 	0.4,
 	earth_material
     ));
-
-    cam.lookfrom = point3(0, 0, 3);
-    cam.lookat = point3(0, 0, 0);
-
-    cam.defocus_angle = 0; // disable DOF
 }
 
-void cornell_box2(hittable_list& world, camera& cam) {
-    std::string left_path = "../res/cornell_box/left.obj";
-    std::string right_path = "../res/cornell_box/right.obj";
-    std::string back_path = "../res/cornell_box/back.obj";
-    std::string floor_path = "../res/cornell_box/floor.obj";
-    std::string ceil_path = "../res/cornell_box/ceil.obj";
-    std::string emit_path = "../res/cornell_box/emit.obj";
+void scene9(hittable_list& world, camera& cam) {
+    cornell_box(world, cam);
 
-    auto mat_red = make_shared<lambertian>(color(1.0, 0.0, 0.0));
-    auto mat_green = make_shared<lambertian>(color(0.0, 1.0, 0.0));
-    auto mat_blue = make_shared<lambertian>(color(0.0, 0.0, 1.0));
     auto mat_white = make_shared<lambertian>(color(1.0, 1.0, 1.0));
-    // 조명
-    auto mat_light = make_shared<diffuse_light>(color(15, 15, 15));
 
-    // left
-    world.add(make_shared<quad>(
-	point3(-2, -2, 2),
-	vec3(0, 0, -4),
-	vec3(0, 4, 0),
-	mat_red
-    ));
-
-    // right
-    world.add(make_shared<quad>(
-	point3(2, -2, 2),
-	vec3(0, 0, -4),
-	vec3(0, 4, 0),
-	mat_green
-    ));
-
-    // floor
-    world.add(make_shared<quad>(
-	point3(-2, -2, 2),
-	vec3(4, 0, 0),
-	vec3(0, 0, -4),
+    world.add(box(
+	point3(-0.9, 0.7, -2),
+	point3(0, -2, -1),
 	mat_white
     ));
 
-    // ceil
-    world.add(make_shared<quad>(
-	point3(-2, 2, 2),
-	vec3(4, 0, 0),
-	vec3(0, 0, -4),
+    world.add(box(
+	point3(-0.1, -2, 0),
+	point3(0.9, -1, 1),
 	mat_white
     ));
-
-    // back
-    world.add(make_shared<quad>(
-	point3(-2, -2, -2),
-	vec3(4, 0, 0),
-	vec3(0, 4, 0),
-	mat_white
-    ));
-
-    // emit
-    world.add(make_shared<quad>(
-	point3(-0.5, 1.95, -.25),
-	vec3(1.0, 0, 0),
-	vec3(0, 0, -1.0),
-	mat_light
-    ));
-
-    cam.lookfrom = point3(0, 0, 3);
-    cam.lookat = point3(0, 0, 0);
-
-    cam.defocus_angle = 0; // disable DOF
 }
 
 int main() {
     // 카메라
     camera cam;
-    cam.aspect_ratio = 16.0 / 9.0;
-    cam.image_width = 2048;
-    cam.samples_per_pixel = 100;
+    cam.aspect_ratio = 1.0;
+    cam.image_width = 1024;
+    cam.samples_per_pixel = 200;
     cam.max_depth = 10;
     cam.background = color(0, 0, 0);
 
@@ -387,9 +340,9 @@ int main() {
     hittable_list world; // 모든 hittable한 오브젝트를 저장
 
     // 불러올 씬
-    cornell_box1(world, cam);
+    scene9(world, cam);
 
-    // BVH
+    // 월드 공간 BVH
     world = hittable_list(make_shared<bvh_node>(world));
 
     cam.render(world); // hittable_list에 있는 모든 물체에 대해 렌더링

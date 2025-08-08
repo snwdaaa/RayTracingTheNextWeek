@@ -471,3 +471,6 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# 출력 이미지
+*.ppm

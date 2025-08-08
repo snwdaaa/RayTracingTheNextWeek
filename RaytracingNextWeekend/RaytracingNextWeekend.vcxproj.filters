@@ -78,6 +78,9 @@
     <ClInclude Include="..\src\external\stb_image.h">
       <Filter>헤더 파일\external</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\mat4.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\main.cpp">
