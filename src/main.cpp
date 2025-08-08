@@ -1,4 +1,5 @@
-﻿#include "rtWeekend.h"
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include "rtWeekend.h"
 #include "scene_info.h"
 #include "interval.h"
 #include "aabb.h"
@@ -85,7 +86,7 @@ void scene4(hittable_list& world, camera& cam) {
 
     world.add(make_shared<sphere>(point3(0.0, -100.5, -1.0), 100.0, material_ground));
 
-    std::string teapot_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/teapot.obj";
+    std::string teapot_path = "../res/teapot.obj";
     auto obj1 = make_shared<polygon_mesh>(
 	teapot_path,
 	material_lambertian,
@@ -93,6 +94,7 @@ void scene4(hittable_list& world, camera& cam) {
 	point3(0, 0, 0),
 	vec3(1, 1, 1)
     );
+    world.add(obj1);
 
     auto obj2 = make_shared<polygon_mesh>(
 	teapot_path,
@@ -101,8 +103,9 @@ void scene4(hittable_list& world, camera& cam) {
 	point3(-6, 0, 0),
 	vec3(1, 1, 1)
     );
+    world.add(obj2);
 
-    std::string bunny_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/stanford-bunny.obj";
+    std::string bunny_path = "../res/stanford-bunny.obj";
     auto obj3 = make_shared<polygon_mesh>(
 	bunny_path,
 	material_metal2,
@@ -110,10 +113,13 @@ void scene4(hittable_list& world, camera& cam) {
 	point3(6, 0, 1),
 	vec3(20, 20, 20)
     );
+    world.add(obj3);
 
     cam.lookfrom = point3(0, 4, 6);
     cam.lookat = point3(0, 0, 0);
     cam.background = color(0.70, 0.80, 1.00);
+
+    cam.defocus_angle = 0; // disable DOF
 }
 
 // Triangle 개수에 따른 렌더 시간 테스트
@@ -122,12 +128,12 @@ void scene5(hittable_list& world, camera& cam) {
     auto material_lambertian = make_shared<lambertian>(color(0.1, 0.2, 0.5));
     auto material_metal = make_shared<metal>(color(0.8, 0.6, 0.2), 0.1);
 
-    std::string bunny_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/stanford-bunny.obj";
-    std::string bunny_path_08 = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/stanford-bunny-08.obj";
-    std::string bunny_path_06 = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/stanford-bunny-06.obj";
-    std::string bunny_path_04 = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/stanford-bunny-04.obj";
-    std::string bunny_path_02 = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/stanford-bunny-02.obj";
-    std::string bunny_path_01 = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/stanford-bunny-01.obj";
+    std::string bunny_path = "../res/stanford-bunny.obj";
+    std::string bunny_path_08 = "../res/stanford-bunny-08.obj";
+    std::string bunny_path_06 = "../res/stanford-bunny-06.obj";
+    std::string bunny_path_04 = "../res/stanford-bunny-04.obj";
+    std::string bunny_path_02 = "../res/stanford-bunny-02.obj";
+    std::string bunny_path_01 = "../res/stanford-bunny-01.obj";
 
     //world.add(make_shared<sphere>(point3(0.0, -100.5, -1.0), 100.0, material_ground));
     auto bunny_test = make_shared<polygon_mesh>(
@@ -146,7 +152,7 @@ void scene5(hittable_list& world, camera& cam) {
 void scene6(hittable_list& world, camera& cam) {
     auto material_lambertian = make_shared<lambertian>(color(0.1, 0.2, 0.5));
     auto material_metal = make_shared<metal>(color(0.8, 0.6, 0.2), 0.1);
-    std::string vase_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/vase.obj";
+    std::string vase_path = "../res/vase.obj";
     auto vase = make_shared<polygon_mesh>(
 	vase_path,
 	material_metal,
@@ -182,12 +188,12 @@ void scene7(hittable_list& world, camera& cam) {
 }
 
 void cornell_box(hittable_list& world, camera& cam) {
-    std::string left_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/cornell_box/left.obj";
-    std::string right_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/cornell_box/right.obj";
-    std::string back_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/cornell_box/back.obj";
-    std::string floor_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/cornell_box/floor.obj";
-    std::string ceil_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/cornell_box/ceil.obj";
-    std::string emit_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/cornell_box/emit.obj";
+    std::string left_path = "../res/cornell_box/left.obj";
+    std::string right_path = "../res/cornell_box/right.obj";
+    std::string back_path = "../res/cornell_box/back.obj";
+    std::string floor_path = "../res/cornell_box/floor.obj";
+    std::string ceil_path = "../res/cornell_box/ceil.obj";
+    std::string emit_path = "../res/cornell_box/emit.obj";
 
     auto mat_red = make_shared<lambertian>(color(1.0, 0.0, 0.0));
     auto mat_green = make_shared<lambertian>(color(0.0, 1.0, 0.0));
@@ -203,6 +209,7 @@ void cornell_box(hittable_list& world, camera& cam) {
 	point3(0, 0, 0),
 	vec3(0.01, 0.01, 0.01)
     );
+    world.add(left);
 
     auto right = make_shared<polygon_mesh>(
 	right_path,
@@ -211,6 +218,7 @@ void cornell_box(hittable_list& world, camera& cam) {
 	point3(0, 0, 0),
 	vec3(0.01, 0.01, 0.01)
     );
+    world.add(right);
 
     auto ceil = make_shared<polygon_mesh>(
 	ceil_path,
@@ -219,6 +227,7 @@ void cornell_box(hittable_list& world, camera& cam) {
 	point3(0, 0, 0),
 	vec3(0.01, 0.01, 0.01)
     );
+    world.add(ceil);
 
     auto back = make_shared<polygon_mesh>(
 	back_path,
@@ -227,6 +236,7 @@ void cornell_box(hittable_list& world, camera& cam) {
 	point3(0, 0, 0),
 	vec3(0.01, 0.01, 0.01)
     );
+    world.add(back);
 
     auto floor = make_shared<polygon_mesh>(
 	floor_path,
@@ -235,6 +245,7 @@ void cornell_box(hittable_list& world, camera& cam) {
 	point3(0, 0, 0),
 	vec3(0.01, 0.01, 0.01)
     );
+    world.add(floor);
 
     auto emit = make_shared<polygon_mesh>(
 	emit_path,
@@ -243,9 +254,10 @@ void cornell_box(hittable_list& world, camera& cam) {
 	point3(0, 3.9, 0),
 	vec3(0.005, -0.01, 0.005)
     );
+    world.add(emit);
 
-    std::string bunny_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/stanford-bunny.obj";
-    std::string teapot_path = "C:/Users/kkj48/Desktop/Projects/RayTracingInOneWeekend/res/teapot.obj";
+    std::string bunny_path = "../res/stanford-bunny.obj";
+    std::string teapot_path = "../res/teapot.obj";
 
     auto material_lambertian = make_shared<lambertian>(color(0.1, 0.2, 0.5));
     auto material_metal1 = make_shared<metal>(color(0.3, 0.6, 0.8), 1.0);
@@ -259,6 +271,7 @@ void cornell_box(hittable_list& world, camera& cam) {
 	point3(0, -2, 0),
 	vec3(0.3, 0.3, 0.3)
     );
+    world.add(obj1);
 
     auto obj2 = make_shared<polygon_mesh>(
 	teapot_path,
@@ -267,6 +280,7 @@ void cornell_box(hittable_list& world, camera& cam) {
 	point3(-1, -1, 0),
 	vec3(0.3, 0.3, 0.3)
     );
+    world.add(obj2);
 
     auto obj3 = make_shared<polygon_mesh>(
 	bunny_path,
@@ -275,6 +289,7 @@ void cornell_box(hittable_list& world, camera& cam) {
 	point3(1, -1, 0),
 	vec3(10, 10, 10)
     );
+    world.add(obj3);
 
     auto sphere_center1 = point3(-1, 0.5, 0);
     auto sphere_center2 = sphere_center1 + vec3(random_double(0, 0.5), random_double(0, 1), 0);
