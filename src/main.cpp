@@ -187,74 +187,60 @@ void scene7(hittable_list& world, camera& cam) {
     cam.defocus_angle = 0;
 }
 
-void cornell_box(hittable_list& world, camera& cam) {
-    std::string left_path = "../res/cornell_box/left.obj";
-    std::string right_path = "../res/cornell_box/right.obj";
-    std::string back_path = "../res/cornell_box/back.obj";
-    std::string floor_path = "../res/cornell_box/floor.obj";
-    std::string ceil_path = "../res/cornell_box/ceil.obj";
-    std::string emit_path = "../res/cornell_box/emit.obj";
-
+void cornell_box1(hittable_list& world, camera& cam) {
     auto mat_red = make_shared<lambertian>(color(1.0, 0.0, 0.0));
     auto mat_green = make_shared<lambertian>(color(0.0, 1.0, 0.0));
     auto mat_blue = make_shared<lambertian>(color(0.0, 0.0, 1.0));
     auto mat_white = make_shared<lambertian>(color(1.0, 1.0, 1.0));
-    // 조명
     auto mat_light = make_shared<diffuse_light>(color(15, 15, 15));
 
-    auto left = make_shared<polygon_mesh>(
-	left_path,
-	mat_red,
-	world,
-	point3(0, 0, 0),
-	vec3(0.01, 0.01, 0.01)
-    );
-    world.add(left);
+    // left
+    world.add(make_shared<quad>(
+	point3(-2, -2, 2),
+	vec3(0, 0, -4),
+	vec3(0, 4, 0),
+	mat_red
+    ));
 
-    auto right = make_shared<polygon_mesh>(
-	right_path,
-	mat_green,
-	world,
-	point3(0, 0, 0),
-	vec3(0.01, 0.01, 0.01)
-    );
-    world.add(right);
+    // right
+    world.add(make_shared<quad>(
+	point3(2, -2, 2),
+	vec3(0, 0, -4),
+	vec3(0, 4, 0),
+	mat_green
+    ));
 
-    auto ceil = make_shared<polygon_mesh>(
-	ceil_path,
-	mat_white,
-	world,
-	point3(0, 0, 0),
-	vec3(0.01, 0.01, 0.01)
-    );
-    world.add(ceil);
+    // floor
+    world.add(make_shared<quad>(
+	point3(-2, -2, 2),
+	vec3(4, 0, 0),
+	vec3(0, 0, -4),
+	mat_white
+    ));
 
-    auto back = make_shared<polygon_mesh>(
-	back_path,
-	mat_white,
-	world,
-	point3(0, 0, 0),
-	vec3(0.01, 0.01, 0.01)
-    );
-    world.add(back);
+    // ceil
+    world.add(make_shared<quad>(
+	point3(-2, 2, 2),
+	vec3(4, 0, 0),
+	vec3(0, 0, -4),
+	mat_white
+    ));
 
-    auto floor = make_shared<polygon_mesh>(
-	floor_path,
-	mat_white,
-	world,
-	point3(0, 0, 0),
-	vec3(0.01, 0.01, 0.01)
-    );
-    world.add(floor);
+    // back
+    world.add(make_shared<quad>(
+	point3(-2, -2, -2),
+	vec3(4, 0, 0),
+	vec3(0, 4, 0),
+	mat_white
+    ));
 
-    auto emit = make_shared<polygon_mesh>(
-	emit_path,
-	mat_light,
-	world,
-	point3(0, 3.9, 0),
-	vec3(0.005, -0.01, 0.005)
-    );
-    world.add(emit);
+    // emit
+    world.add(make_shared<quad>(
+	point3(-0.5, 1.95, -.25),
+	vec3(1.0, 0, 0),
+	vec3(0, 0, -1.0),
+	mat_light
+    ));
 
     std::string bunny_path = "../res/stanford-bunny.obj";
     std::string teapot_path = "../res/teapot.obj";
@@ -311,6 +297,75 @@ void cornell_box(hittable_list& world, camera& cam) {
     cam.defocus_angle = 0; // disable DOF
 }
 
+void cornell_box2(hittable_list& world, camera& cam) {
+    std::string left_path = "../res/cornell_box/left.obj";
+    std::string right_path = "../res/cornell_box/right.obj";
+    std::string back_path = "../res/cornell_box/back.obj";
+    std::string floor_path = "../res/cornell_box/floor.obj";
+    std::string ceil_path = "../res/cornell_box/ceil.obj";
+    std::string emit_path = "../res/cornell_box/emit.obj";
+
+    auto mat_red = make_shared<lambertian>(color(1.0, 0.0, 0.0));
+    auto mat_green = make_shared<lambertian>(color(0.0, 1.0, 0.0));
+    auto mat_blue = make_shared<lambertian>(color(0.0, 0.0, 1.0));
+    auto mat_white = make_shared<lambertian>(color(1.0, 1.0, 1.0));
+    // 조명
+    auto mat_light = make_shared<diffuse_light>(color(15, 15, 15));
+
+    // left
+    world.add(make_shared<quad>(
+	point3(-2, -2, 2),
+	vec3(0, 0, -4),
+	vec3(0, 4, 0),
+	mat_red
+    ));
+
+    // right
+    world.add(make_shared<quad>(
+	point3(2, -2, 2),
+	vec3(0, 0, -4),
+	vec3(0, 4, 0),
+	mat_green
+    ));
+
+    // floor
+    world.add(make_shared<quad>(
+	point3(-2, -2, 2),
+	vec3(4, 0, 0),
+	vec3(0, 0, -4),
+	mat_white
+    ));
+
+    // ceil
+    world.add(make_shared<quad>(
+	point3(-2, 2, 2),
+	vec3(4, 0, 0),
+	vec3(0, 0, -4),
+	mat_white
+    ));
+
+    // back
+    world.add(make_shared<quad>(
+	point3(-2, -2, -2),
+	vec3(4, 0, 0),
+	vec3(0, 4, 0),
+	mat_white
+    ));
+
+    // emit
+    world.add(make_shared<quad>(
+	point3(-0.5, 1.95, -.25),
+	vec3(1.0, 0, 0),
+	vec3(0, 0, -1.0),
+	mat_light
+    ));
+
+    cam.lookfrom = point3(0, 0, 3);
+    cam.lookat = point3(0, 0, 0);
+
+    cam.defocus_angle = 0; // disable DOF
+}
+
 int main() {
     // 카메라
     camera cam;
@@ -332,7 +387,7 @@ int main() {
     hittable_list world; // 모든 hittable한 오브젝트를 저장
 
     // 불러올 씬
-    cornell_box(world, cam);
+    cornell_box1(world, cam);
 
     // BVH
     world = hittable_list(make_shared<bvh_node>(world));
