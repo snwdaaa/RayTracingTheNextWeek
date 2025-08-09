@@ -1,4 +1,4 @@
-#ifndef VEC4_H
+ï»¿#ifndef VEC4_H
 #define VEC4_H
 
 class vec4 {
@@ -9,10 +9,17 @@ public:
 
     vec4(double e0, double e1, double e2, double e3) : e{ e0, e1, e2, e3 } {}
 
-    // vec3À» vec4·Î º¯È¯
+    vec4(const vec4& v) {
+        e[0] = v.e[0];
+        e[1] = v.e[1];
+        e[2] = v.e[2];
+        e[3] = v.e[3];
+    }
+
+    // vec3ì„ vec4ë¡œ ë³€í™˜
     vec4(const vec3& v3) : e{ v3.x(), v3.y(), v3.z(), 0.0 } {}
 
-    // point3À» vec4·Î º¯È¯
+    // point3ì„ vec4ë¡œ ë³€í™˜
     vec4(const point3& p3) : e{ p3.x(), p3.y(), p3.z(), 1.0 } {}
 
     double x() const { return e[0]; }
@@ -53,7 +60,7 @@ public:
     }
 
     bool near_zero() const {
-        // º¤ÅÍ°¡ ¸ğµç ¹æÇâÀ¸·Î 0¿¡ °¡±î¿ì¸é true ¸®ÅÏ
+        // ë²¡í„°ê°€ ëª¨ë“  ë°©í–¥ìœ¼ë¡œ 0ì— ê°€ê¹Œìš°ë©´ true ë¦¬í„´
         auto s = 1e-8;
         return (std::fabs(e[0]) < s) && (std::fabs(e[1]) < s) && (std::fabs(e[2]) < s) && (std::fabs(e[3]) < s);
     }
@@ -61,13 +68,13 @@ public:
     vec3 to_vec3() const {
         auto w = e[3];
 
-        if (std::abs(w) > 1e-8) // 0ÀÌ ¾Æ´Ï¸é (Á¡ÀÎ °æ¿ì)
+        if (std::abs(w) > 1e-8) // 0ì´ ì•„ë‹ˆë©´ (ì ì¸ ê²½ìš°)
             return vec3(e[0] / w, e[1] / w, e[2] / w);
         else
             return vec3(e[0], e[1], e[2]);
     }
 
-    // ·£´ı ¹æÇâ º¤ÅÍ »ı¼º
+    // ëœë¤ ë°©í–¥ ë²¡í„° ìƒì„±
     static vec4 random() {
         return vec4(random_double(), random_double(), random_double(), random_double());
     }
@@ -77,7 +84,7 @@ public:
     }
 };
 
-// º¤ÅÍ À¯Æ¿¸®Æ¼ ÇÔ¼ö
+// ë²¡í„° ìœ í‹¸ë¦¬í‹° í•¨ìˆ˜
 inline std::ostream& operator<<(std::ostream& out, const vec4& v) {
     return out << v.e[0] << " " << v.e[1] << " " << v.e[2] << " " << v.e[3];
 }

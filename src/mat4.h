@@ -12,6 +12,10 @@ public:
 	std::fill(m[0][0], m[3][3], 0);
     }
 
+    matrix4(const matrix4& mat) {
+	memcpy(m, mat.m, sizeof(double) * 16);
+    }
+
     matrix4(const std::vector<double>& r1, const std::vector<double>& r2,
 	const std::vector<double>& r3, const std::vector<double>& r4)
     {
@@ -39,5 +43,11 @@ public:
 
 	return mat;
     }
+    
+ //   matrix4 operator+(const matrix4& other) {
+	//matrix4 mat;
+
+
+ //   }
 };
 #endif
