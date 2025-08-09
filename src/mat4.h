@@ -28,6 +28,16 @@ public:
 	// 동적 할당한 배열은 사용하면 안 됨
 	memcpy(m, mat_arr, sizeof(double) * 16);
     }
-};
 
+    matrix4 operator*(const matrix4& other) {
+	matrix4 mat;
+
+	for (unsigned int i = 0; i < 4; i++)
+	    for (unsigned int j = 0; j < 4; j++)
+		for (unsigned int k = 0; k < 4; k++)
+		    mat.m[i][j] += m[i][k] * other.m[k][j];
+
+	return mat;
+    }
+};
 #endif

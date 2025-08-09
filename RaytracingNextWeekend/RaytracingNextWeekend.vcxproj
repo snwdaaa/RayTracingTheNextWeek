@@ -153,6 +153,7 @@
     <ClInclude Include="..\src\texture.h" />
     <ClInclude Include="..\src\triangle.h" />
     <ClInclude Include="..\src\vec3.h" />
+    <ClInclude Include="..\src\vec4.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\main.cpp" />

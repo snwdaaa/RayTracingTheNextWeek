@@ -324,7 +324,7 @@ int main() {
     camera cam;
     cam.aspect_ratio = 1.0;
     cam.image_width = 1024;
-    cam.samples_per_pixel = 200;
+    cam.samples_per_pixel = 1000;
     cam.max_depth = 10;
     cam.background = color(0, 0, 0);
 
@@ -340,7 +340,7 @@ int main() {
     hittable_list world; // 모든 hittable한 오브젝트를 저장
 
     // 불러올 씬
-    scene9(world, cam);
+    scene8(world, cam);
 
     // 월드 공간 BVH
     world = hittable_list(make_shared<bvh_node>(world));
