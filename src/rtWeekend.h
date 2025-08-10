@@ -50,6 +50,6 @@ inline int random_int(int min, int max) {
 #include "ray.h"
 #include "vec3.h"
 #include "vec4.h"
-#include "mat4.h"
+#include "matrix4.h"
 
 #endif

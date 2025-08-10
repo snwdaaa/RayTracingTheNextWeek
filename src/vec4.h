@@ -16,11 +16,10 @@ public:
         e[3] = v.e[3];
     }
 
-    // vec3을 vec4로 변환
-    vec4(const vec3& v3) : e{ v3.x(), v3.y(), v3.z(), 0.0 } {}
-
-    // point3을 vec4로 변환
-    vec4(const point3& p3) : e{ p3.x(), p3.y(), p3.z(), 1.0 } {}
+    // vec3 또는 point3를 vec4로 변환
+    // p == 0이면 vec3
+    // p != 1이면 point3
+    vec4(const vec3& v3, const double p) : e{ v3.x(), v3.y(), v3.z(), p } {}
 
     double x() const { return e[0]; }
     double y() const { return e[1]; }

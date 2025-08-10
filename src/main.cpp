@@ -324,7 +324,7 @@ int main() {
     camera cam;
     cam.aspect_ratio = 1.0;
     cam.image_width = 1024;
-    cam.samples_per_pixel = 1000;
+    cam.samples_per_pixel = 100;
     cam.max_depth = 10;
     cam.background = color(0, 0, 0);
 
