@@ -1,5 +1,6 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include "rtWeekend.h"
+#include "transformation_matrix.h"
 #include "scene_info.h"
 #include "interval.h"
 #include "aabb.h"
@@ -10,6 +11,7 @@
 #include "triangle.h"
 #include "polygon_mesh.h"
 #include "quad.h"
+#include "transform.h"
 #include "image_opener.h"
 #include "camera.h"
 #include "material.h"

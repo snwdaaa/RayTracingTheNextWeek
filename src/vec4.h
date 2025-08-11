@@ -19,7 +19,7 @@ public:
     // vec3 또는 point3를 vec4로 변환
     // p == 0이면 vec3
     // p != 1이면 point3
-    vec4(const vec3& v3, const double p) : e{ v3.x(), v3.y(), v3.z(), p } {}
+    //vec4(const vec3& v3, const double p) : e{ v3.x(), v3.y(), v3.z(), p } {}
 
     double x() const { return e[0]; }
     double y() const { return e[1]; }
@@ -64,15 +64,6 @@ public:
         return (std::fabs(e[0]) < s) && (std::fabs(e[1]) < s) && (std::fabs(e[2]) < s) && (std::fabs(e[3]) < s);
     }
 
-    vec3 to_vec3() const {
-        auto w = e[3];
-
-        if (std::abs(w) > 1e-8) // 0이 아니면 (점인 경우)
-            return vec3(e[0] / w, e[1] / w, e[2] / w);
-        else
-            return vec3(e[0], e[1], e[2]);
-    }
-
     // 랜덤 방향 벡터 생성
     static vec4 random() {
         return vec4(random_double(), random_double(), random_double(), random_double());
@@ -108,8 +99,31 @@ inline vec4 operator*(const vec4& v, double t) {
     return t * v;
 }
 
+inline vec4 operator*(const matrix4& m, const vec4& v) {
+    vec4 result;
+    for (unsigned int i = 0; i < 4; i++) {
+        result.e[i] = m[i][0] * v.e[0] +
+            m[i][1] * v.e[1] +
+            m[i][2] * v.e[2] +
+            m[i][3] * v.e[3];
+    }
+    return result;
+}
+
+inline vec4 operator*(const vec4& v, const matrix4& m) {
+    return m * v;
+}
+
 inline vec4 operator/(const vec4& v, double t) {
     return (1 / t) * v;
+}
+
+inline vec4 to_vec4(const vec3& v) {
+    return vec4(v.x(), v.y(), v.z(), 0.0);
+}
+
+inline vec4 to_vec4(const point3& p) {
+    return vec4(p.x(), p.y(), p.z(), 1.0);
 }
 
 #endif VEC4_H

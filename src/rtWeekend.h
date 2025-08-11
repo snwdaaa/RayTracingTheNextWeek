@@ -46,10 +46,11 @@ inline int random_int(int min, int max) {
 
 // Common Header
 
+#include "vec3.h"
+#include "point3.h"
+#include "matrix4.h"
+#include "vec4.h"
 #include "color.h"
 #include "ray.h"
-#include "vec3.h"
-#include "vec4.h"
-#include "matrix4.h"
 
 #endif

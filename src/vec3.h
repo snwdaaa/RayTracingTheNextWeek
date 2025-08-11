@@ -58,9 +58,6 @@ class vec3 {
         }
 };
 
-// point3를 vec3의 alias로 사용
-using point3 = vec3;
-
 // 벡터 유틸리티 함수
 inline std::ostream& operator<<(std::ostream& out, const vec3& v) {
     return out << v.e[0] << " " << v.e[1] << " " << v.e[2];
@@ -153,6 +150,18 @@ inline vec3 refract(const vec3& uv, const vec3& n, double etai_over_etat) {
     vec3 r_out_parallel = -std::sqrt(
         std::fabs(1.0 - r_out_perp.length_squared())) * n; // 수평 성분
     return r_out_perp + r_out_parallel; // R'
+}
+
+inline vec3 to_vec3(const vec4& v) {
+    auto x = v.x();
+    auto y = v.y();
+    auto z = v.z();
+    auto w = v.w();
+
+    if (std::abs(w) > 1e-8) // 0이 아니면 (점인 경우)
+        return vec3(x / w, y / w, z / w);
+    else
+        return vec3(x, y, z);
 }
 
 #endif

@@ -79,7 +79,7 @@ public:
         rec.mat = mat;
         vec3 outward_normal = (rec.p - current_center) / radius;
         rec.set_face_normal(r, outward_normal); // 법선 벡터 방향 결정
-        get_sphere_uv(outward_normal, rec.u, rec.v);
+        get_sphere_uv(to_point3(outward_normal), rec.u, rec.v);
 
         return true; // 충돌 O
     }
