@@ -47,9 +47,15 @@ public:
     }
 
     vec4& operator/=(double t) {
+        if (std::abs(t) < std::numeric_limits<double>::epsilon())
+            throw std::runtime_error("Division by zero in vec4");
+
         return *this *= 1 / t;
     }
 
+    // 4차원 공간의 길이 계산
+    // w 값을 포함하여 계산하므로 벡터 정규화 혹은 길이 비교 로직에서
+    // 문제 발생할 수 있음 -> 아래 3차원 공간 길이 계산 함수 사용
     double length() const {
         return std::sqrt(length_squared());
     }
@@ -58,9 +64,18 @@ public:
         return e[0] * e[0] + e[1] * e[1] + e[2] * e[2] + e[3] * e[3];
     }
 
+    double length3() const {
+        return std::sqrt(length3_squared());
+    }
+
+    // 3D 공간에서의 길이를 계산하는 함수
+    double length3_squared() const {
+        return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
+    }
+
     bool near_zero() const {
         // 벡터가 모든 방향으로 0에 가까우면 true 리턴
-        auto s = 1e-8;
+        auto s = std::numeric_limits<double>::epsilon();
         return (std::fabs(e[0]) < s) && (std::fabs(e[1]) < s) && (std::fabs(e[2]) < s) && (std::fabs(e[3]) < s);
     }
 
@@ -110,12 +125,35 @@ inline vec4 operator*(const matrix4& m, const vec4& v) {
     return result;
 }
 
-inline vec4 operator*(const vec4& v, const matrix4& m) {
-    return m * v;
+inline vec4 operator/(const vec4& v, double t) {
+    if (std::abs(t) < std::numeric_limits<double>::epsilon())
+        throw std::runtime_error("Division by zero in vec4");
+
+    return (1 / t) * v;
 }
 
-inline vec4 operator/(const vec4& v, double t) {
-    return (1 / t) * v;
+inline vec3 to_vec3(const vec4& v) {
+    auto x = v.x();
+    auto y = v.y();
+    auto z = v.z();
+    auto w = v.w();
+
+    if (std::abs(w) > std::numeric_limits<double>::epsilon()) // 0이 아니면 (점인 경우)
+        return vec3(x / w, y / w, z / w);
+    else
+        return vec3(x, y, z);
+}
+
+inline point3 to_point3(const vec4& v) {
+    auto x = v.x();
+    auto y = v.y();
+    auto z = v.z();
+    auto w = v.w();
+
+    if (std::abs(w) > std::numeric_limits<double>::epsilon()) // 0이 아니면 (점인 경우)
+        return point3(x / w, y / w, z / w);
+    else
+        return point3(x, y, z);
 }
 
 inline vec4 to_vec4(const vec3& v) {

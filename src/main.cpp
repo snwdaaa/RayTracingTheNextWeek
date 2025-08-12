@@ -308,17 +308,19 @@ void scene9(hittable_list& world, camera& cam) {
 
     auto mat_white = make_shared<lambertian>(color(1.0, 1.0, 1.0));
 
-    world.add(box(
-	point3(-0.9, 0.7, -2),
-	point3(0, -2, -1),
-	mat_white
-    ));
+    auto box1 = make_shared<transform>(
+	box(point3(-0.9, 0.7, -2), point3(0, -2, -1), mat_white),
+	point3(0, 0, 0)
+    );
+    world.add(box1);
 
-    world.add(box(
-	point3(-0.1, -2, 0),
-	point3(0.9, -1, 1),
-	mat_white
-    ));
+    auto box2 = make_shared<transform>(
+	box(point3(-0.1, -2, 0), point3(0.9, -1, 1), mat_white),
+	point3(1, 1, 0),
+	vec3(0, 45, 0),
+	vec3(1.5, 1.5, 1.5)
+    );
+    world.add(box2);
 }
 
 int main() {
@@ -326,7 +328,7 @@ int main() {
     camera cam;
     cam.aspect_ratio = 1.0;
     cam.image_width = 1024;
-    cam.samples_per_pixel = 100;
+    cam.samples_per_pixel = 30;
     cam.max_depth = 10;
     cam.background = color(0, 0, 0);
 
@@ -342,7 +344,7 @@ int main() {
     hittable_list world; // 모든 hittable한 오브젝트를 저장
 
     // 불러올 씬
-    scene8(world, cam);
+    scene9(world, cam);
 
     // 월드 공간 BVH
     world = hittable_list(make_shared<bvh_node>(world));

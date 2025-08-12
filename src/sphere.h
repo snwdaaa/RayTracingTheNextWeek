@@ -85,9 +85,7 @@ public:
     }
 
     // 구 바운딩 박스
-    aabb bounding_box() const override {
-        return bbox;
-    }
+    aabb bounding_box() const override { return bbox; }
 };
 
 #endif

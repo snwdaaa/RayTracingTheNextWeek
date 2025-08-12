@@ -11,6 +11,7 @@
 #include <chrono>
 #include <vector>
 #include <algorithm>
+#include <stdexcept>
 
 // C++ std usings
 

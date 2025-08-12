@@ -152,16 +152,4 @@ inline vec3 refract(const vec3& uv, const vec3& n, double etai_over_etat) {
     return r_out_perp + r_out_parallel; // R'
 }
 
-inline vec3 to_vec3(const vec4& v) {
-    auto x = v.x();
-    auto y = v.y();
-    auto z = v.z();
-    auto w = v.w();
-
-    if (std::abs(w) > 1e-8) // 0이 아니면 (점인 경우)
-        return vec3(x / w, y / w, z / w);
-    else
-        return vec3(x, y, z);
-}
-
 #endif

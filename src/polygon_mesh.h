@@ -268,9 +268,7 @@ public:
 	return mesh_bvh_root->hit(r, ray_t, rec);
     }
 
-    aabb bounding_box() const override {
-	return bbox;
-    }
+    aabb bounding_box() const override { return bbox; }
 
     // 모든 면의 bbox 미리 계산
     aabb make_triangle_bbox(const int& v0_idx, const int& v1_idx, const int& v2_idx) {

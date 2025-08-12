@@ -25,13 +25,13 @@ public:
     double* operator[](int i) { return m[i]; }
 
     matrix4 operator-() const {
-	matrix4 mat4;
+	matrix4 mat;
 
 	for (unsigned int i = 0; i < 4; i++)
 	    for (unsigned int j = 0; j < 4; j++)
-		mat4.m[i][j] = -m[i][j];
+		mat.m[i][j] = -m[i][j];
 
-	return mat4;
+	return mat;
     }
 
     matrix4 operator*(const matrix4& other) const {
@@ -45,8 +45,9 @@ public:
 	return mat;
     }
 
-    matrix4 operator*=(const matrix4& other) const {
-	return (*this) * other;
+    matrix4& operator*=(const matrix4& other) {
+	*this = (*this) * other;
+	return *this;
     }
     
     matrix4 operator+(const matrix4& other) const {
@@ -59,8 +60,9 @@ public:
 	return mat;
     }
 
-    matrix4 operator+=(const matrix4& other) const {
-	return (*this) + other;
+    matrix4& operator+=(const matrix4& other) {
+	*this = (*this) + other;
+	return *this;
     }
 
     matrix4 operator-(const matrix4& other) const {
@@ -73,22 +75,9 @@ public:
 	return mat;
     }
 
-    matrix4 operator-=(const matrix4& other) const {
-	return (*this) - other;
-    }
-
-    matrix4 operator/(const matrix4& other) const {
-	matrix4 mat;
-
-	for (unsigned int i = 0; i < 4; i++)
-	    for (unsigned int j = 0; j < 4; j++)
-		mat.m[i][j] = m[i][j] / other[i][j];
-
-	return mat;
-    }
-
-    matrix4 operator/=(const matrix4& other) const {
-	return (*this) / other;
+    matrix4& operator-=(const matrix4& other) {
+	*this = (*this) - other;
+	return *this;
     }
 
     const double determinant() const {
@@ -169,7 +158,7 @@ inline matrix4 adjoint(const matrix4& mat) {
 inline matrix4 inverse(const matrix4& mat) {
     double det = mat.determinant();
     if (std::abs(det) < 1e-8) { // 행렬식이 0이면 분자가 0이 됨
-	return identity(); // 임시로 항등행렬 리턴
+	throw std::runtime_error("Matrix is not invertible.");
     }
 
     matrix4 adj = adjoint(mat);
@@ -177,11 +166,11 @@ inline matrix4 inverse(const matrix4& mat) {
 }
 
 inline matrix4 transpose(const matrix4& mat) {
-    matrix4 t(mat);
+    matrix4 t = mat;
 
     for (unsigned int i = 0; i < 4; i++)
-	for (unsigned int j = 0; j < 4; j++)
-	    t.m[i][j] = t.m[j][i];
+	for (unsigned int j = i + 1; j < 4; j++)
+	    std::swap(t.m[i][j], t.m[j][i]);
 
     return t;
 }

@@ -83,16 +83,4 @@ inline point3 to_point3(const vec3& v) {
     return point3(v.e[0], v.e[1], v.e[2]);
 }
 
-inline point3 to_point3(const vec4& v) {
-    auto x = v.x();
-    auto y = v.y();
-    auto z = v.z();
-    auto w = v.w();
-
-    if (std::abs(w) > 1e-8) // 0이 아니면 (점인 경우)
-        return point3(x / w, y / w, z / w);
-    else
-        return point3(x, y, z);
-}
-
 #endif

@@ -23,11 +23,11 @@ public:
 	D = dot(normal, Q);
 	w = n / dot(n, n);
 
-	set_bounding_box();
+	set_init_bounding_box();
     }
 
     // 바운딩 박스 계산
-    virtual void set_bounding_box() {
+    virtual void set_init_bounding_box() {
 	auto bbox_diagonal1 = aabb(Q, Q + u + v); // xy
 	auto bbox_diagonal2 = aabb(Q + u, Q + v); // z
 	bbox = aabb(bbox_diagonal1, bbox_diagonal2);
@@ -82,7 +82,7 @@ public:
     }
 };
 
-inline shared_ptr<hittable_list> box(const point3& a, const point3& b, shared_ptr<material> mat) {
+inline shared_ptr<hittable> box(const point3& a, const point3& b, shared_ptr<material> mat) {
     // 양 끝점 a와 b로 만들어지는 3D 큐브 리턴
     
     auto sides = make_shared<hittable_list>();

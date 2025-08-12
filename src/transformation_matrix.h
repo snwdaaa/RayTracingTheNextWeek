@@ -68,6 +68,4 @@ public:
     }
 };
 
-
-
 #endif TRANSFORMATION_H

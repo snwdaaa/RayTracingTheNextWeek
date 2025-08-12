@@ -92,9 +92,7 @@ public:
 	return true;
     }
 
-    aabb bounding_box() const override {
-	return bbox;
-    }
+    aabb bounding_box() const override { return bbox; }
 };
 
 #endif
