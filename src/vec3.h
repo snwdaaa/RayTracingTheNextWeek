@@ -31,6 +31,9 @@ class vec3 {
         }
 
         vec3& operator/=(double t) {
+            if (std::abs(t) < std::numeric_limits<double>::epsilon())
+                throw std::runtime_error("Division by zero in vec3");
+
             return *this *= 1/t;
         }
 
@@ -84,6 +87,9 @@ inline vec3 operator*(const vec3& v, double t) {
 }
 
 inline vec3 operator/(const vec3& v, double t) {
+    if (std::abs(t) < std::numeric_limits<double>::epsilon())
+        throw std::runtime_error("Division by zero in vec3");
+
     return (1/t) * v;
 }
 
@@ -98,7 +104,11 @@ inline vec3 cross(const vec3& u, const vec3& v) {
 }
 
 inline vec3 unit_vector(const vec3& v) {
-    return v / v.length();
+    double len = v.length();
+    if (len < std::numeric_limits<double>::epsilon())
+        return vec3(0, 0, 0);
+
+    return v / len;
 }
 
 // 1x1 직사각형에서 원 범위 안에 들어오는 랜덤 벡터 생성

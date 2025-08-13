@@ -54,7 +54,7 @@ public:
     }
 
     static matrix4 rotate(double dx, double dy, double dz) {
-	return rotate_x(dx) * rotate_y(dy) * rotate_z(dz);
+	return rotate_y(dy)* rotate_x(dx) * rotate_z(dz);
     }
 
     static matrix4 scale(double sx, double sy, double sz) {

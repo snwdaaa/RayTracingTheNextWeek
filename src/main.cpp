@@ -307,6 +307,9 @@ void scene9(hittable_list& world, camera& cam) {
     cornell_box(world, cam);
 
     auto mat_white = make_shared<lambertian>(color(1.0, 1.0, 1.0));
+    auto material_metal1 = make_shared<metal>(color(0.3, 0.6, 0.8), 1.0);
+    auto material_metal2 = make_shared<metal>(color(0.8, 0.6, 0.2), 0.4);
+    auto material_dielectric = make_shared<dielectric>(1.50);
 
     auto box1 = make_shared<transform>(
 	box(point3(-0.9, 0.7, -2), point3(0, -2, -1), mat_white),
@@ -316,11 +319,19 @@ void scene9(hittable_list& world, camera& cam) {
 
     auto box2 = make_shared<transform>(
 	box(point3(-0.1, -2, 0), point3(0.9, -1, 1), mat_white),
-	point3(1, 1, 0),
-	vec3(0, 45, 0),
-	vec3(1.5, 1.5, 1.5)
+	point3(0, 0, 0),
+	vec3(0, 30, 0),
+	vec3(1, 1, 1)
     );
     world.add(box2);
+
+    auto sphere1 = make_shared<transform>(
+	make_shared<sphere>(point3(0, 0, 0), 0.5, material_metal1),
+	point3(-1, -1.5, 1),
+	vec3(0, 0, 0),
+	vec3(1, 1, 1)
+    );
+    world.add(sphere1);
 }
 
 int main() {

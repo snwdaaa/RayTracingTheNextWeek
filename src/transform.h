@@ -66,10 +66,10 @@ public:
     void update_bbox() {
 	// bbox의 8개의 정점을 가져옴 -> 변환 행렬 적용(역행렬 아닌 것 주의)
 	// 그 정점으로 bbox 새로 만들어서 업데이트
-	auto bbox = object->bounding_box();
-	auto x_min = bbox.x.min, x_max = bbox.x.max;
-	auto y_min = bbox.y.min, y_max = bbox.y.max;
-	auto z_min = bbox.z.min, z_max = bbox.z.max;
+	auto obj_bbox = object->bounding_box();
+	auto x_min = obj_bbox.x.min, x_max = obj_bbox.x.max;
+	auto y_min = obj_bbox.y.min, y_max = obj_bbox.y.max;
+	auto z_min = obj_bbox.z.min, z_max = obj_bbox.z.max;
 	
 	std::vector<point3> points;
 	points.push_back(point3(x_min, y_max, z_min));
@@ -120,12 +120,13 @@ public:
 	// 대신 광선의 시작점과 방향 벡터에 변환 행렬의 역행렬을 곱해
 	// 레이 하나로만 구현할 수 있게 함
 	// (역행렬을 곱해 레이를 월드 공간에서 로컬 공간으로 보냄)
-	auto transformed_orig = to_point3(to_vec3(
-	     transform_mat_inv * to_vec4(r.origin())
-	));
-	auto transformed_dir = to_vec3(
-	    transform_mat_inv * to_vec4(r.direction())
-	);
+	vec4 world_origin_vec4 = to_vec4(r.origin());
+	vec4 local_origin_vec4 = transform_mat_inv * world_origin_vec4;
+	point3 transformed_orig = to_point3(local_origin_vec4);
+
+	vec4 world_dir_vec4 = to_vec4(r.direction());
+	vec4 local_dir_vec4 = transform_mat_inv * world_dir_vec4;
+	vec3 transformed_dir = to_vec3(local_dir_vec4);
 
 	auto transformed_ray = ray(transformed_orig, transformed_dir, r.time());
 
@@ -139,8 +140,10 @@ public:
 	// 표면에 수직이 아닐 수 있음 (ex: x로만 2배 늘리는 경우)
 	// 이를 해결하려면 원래 변환 행렬의 역행렬을 구한 뒤
 	// 전치한 행렬을 사용해야 함
-	vec3 world_normal = to_vec3(transform_mat_inv_transposed * to_vec4(rec.normal));
-	rec.set_face_normal(r, world_normal);
+	vec4 local_normal = to_vec4(rec.normal);
+	vec4 world_normal_vec4 = transform_mat_inv_transposed * world_normal_vec4;
+	vec3 world_normal = to_vec3(world_normal_vec4);
+	rec.set_face_normal(r, world_normal); // 원래 Ray와 앞뒷면 검사
 
 	return true;
     }
