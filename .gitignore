@@ -473,4 +473,5 @@ FodyWeavers.xsd
 *.msp
 
 # 출력 이미지
-*.ppm
+RaytracingNextWeekend/image.ppm
+/RaytracingNextWeekend
