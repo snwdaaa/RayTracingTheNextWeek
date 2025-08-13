@@ -28,6 +28,17 @@ private:
     }
 public:
     // 정적인 Sphere
+    sphere(double radius, shared_ptr<material> mat)
+        : center(point3(0, 0, 0), vec3(0, 0, 0)),
+        radius(std::fmax(0, radius)),
+        mat(mat)
+    {
+        auto rvec = vec3(radius, radius, radius);
+        //bbox = aabb(center - rvec, center + rvec);
+        auto ray_origin = center.origin();
+        bbox = aabb(ray_origin - rvec, ray_origin + rvec);
+    }
+
     sphere(const point3& static_center, double radius, shared_ptr<material> mat) 
         : center(static_center, vec3(0, 0, 0)), 
         radius(std::fmax(0, radius)),

@@ -187,21 +187,12 @@ private:
     std::vector<triangle_face> faces; // 면 정보 배열
     std::shared_ptr<material> mat; // 머티리얼
 
-    point3 pos; // 위치
-    vec3 scale; // 스케일
-    // TODO: 회전 기능 추가 -> 4차원 homogeneous matrix
-
     // BVH
     aabb bbox;
     shared_ptr<mesh_bvh_node> mesh_bvh_root;
 public:
-    polygon_mesh(
-	std::string& modelPath, 
-	const shared_ptr<material> mat,
-	hittable_list& world, 
-	const point3& pos, 
-	const vec3& scale
-    ) : modelPath(modelPath), mat(mat), pos(pos), scale(scale)
+    polygon_mesh(std::string& modelPath, const shared_ptr<material> mat) 
+	: modelPath(modelPath), mat(mat)
     {
 	// 모델 경로 받고 바로 파싱해서 정점과 면 정보를 저장
 	parse_obj();
@@ -242,12 +233,7 @@ public:
 	    if (identifier == "v") { // vertex인 경우 vertices에 추가
 		double x, y, z;
 		ss >> x >> y >> z;
-		vertices.push_back(point3(
-		    // 지정된 좌표 값을 더함
-		    (x * scale.x()) + pos.x(),
-		    (y * scale.y()) + pos.y(), 
-		    (z * scale.z()) + pos.z()
-		));
+		vertices.push_back(point3(x, y, z));
 	    }
 	    else if (identifier == "f") { // face인 경우 faces에 추가
 		int v0_idx, v1_idx, v2_idx;

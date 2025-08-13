@@ -140,8 +140,8 @@ public:
 	// 표면에 수직이 아닐 수 있음 (ex: x로만 2배 늘리는 경우)
 	// 이를 해결하려면 원래 변환 행렬의 역행렬을 구한 뒤
 	// 전치한 행렬을 사용해야 함
-	vec4 local_normal = to_vec4(rec.normal);
-	vec4 world_normal_vec4 = transform_mat_inv_transposed * world_normal_vec4;
+	vec4 local_normal_vec4 = to_vec4(rec.normal);
+	vec4 world_normal_vec4 = transform_mat_inv_transposed * local_normal_vec4;
 	vec3 world_normal = to_vec3(world_normal_vec4);
 	rec.set_face_normal(r, world_normal); // 원래 Ray와 앞뒷면 검사
 
