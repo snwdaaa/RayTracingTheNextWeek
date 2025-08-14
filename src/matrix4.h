@@ -157,7 +157,7 @@ inline matrix4 adjoint(const matrix4& mat) {
 
 inline matrix4 inverse(const matrix4& mat) {
     double det = mat.determinant();
-    if (std::abs(det) < 1e-8) { // 행렬식이 0이면 분자가 0이 됨
+    if (std::abs(det) < std::numeric_limits<double>::epsilon()) { // 행렬식이 0이면 분자가 0이 됨
 	throw std::runtime_error("Matrix is not invertible");
     }
 

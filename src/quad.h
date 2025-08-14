@@ -39,7 +39,7 @@ public:
 	auto denominator = dot(normal, r.direction()); // t 구하는 식의 분모
 
 	// 레이와 Quad가 평행하면 분모가 0이 됨
-	if (std::fabs(denominator) < 1e-8)
+	if (std::fabs(denominator) < std::numeric_limits<double>::epsilon())
 	    return false;
 
 	// 레이와 평면의 충돌 지점 t 계산

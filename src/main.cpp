@@ -16,6 +16,7 @@
 #include "camera.h"
 #include "material.h"
 #include "texture.h"
+#include "constant_medium.h"
 
 void cornell_box(hittable_list& world, camera& cam) {
     auto mat_red = make_shared<lambertian>(color(1.0, 0.0, 0.0));
@@ -335,6 +336,18 @@ void scene9(hittable_list& world, camera& cam) {
     );
     world.add(box2);
 
+    auto box3 = make_shared<transform>(
+	make_shared<constant_medium>(
+	    box(point3(-0.1, -2, 0), point3(0.9, -1, 1), mat_white),
+	    0.1,
+	    color(0, 0, 0)
+	),
+	point3(0, 0, 0),
+	vec3(0, 0, 0),
+	vec3(1, 1, 1)
+    );
+    world.add(box3);
+
     auto sphere1 = make_shared<transform>(
 	make_shared<sphere>(point3(0, 0, 0), 0.5, material_dielectric),
 	point3(-1, -1.5, 1)
@@ -355,7 +368,7 @@ int main() {
     camera cam;
     cam.aspect_ratio = 1.0;
     cam.image_width = 2048;
-    cam.samples_per_pixel = 100;
+    cam.samples_per_pixel = 10;
     cam.max_depth = 10;
     cam.background = color(0, 0, 0);
 

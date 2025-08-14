@@ -47,7 +47,7 @@ class vec3 {
 
         bool near_zero() const {
             // 벡터가 모든 방향으로 0에 가까우면 true 리턴
-            auto s = 1e-8;
+            auto s = std::numeric_limits<double>::epsilon();
             return (std::fabs(e[0]) < s) && (std::fabs(e[1]) < s) && (std::fabs(e[2]) < s);
         }
 
