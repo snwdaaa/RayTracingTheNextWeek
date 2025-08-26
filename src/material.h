@@ -1,4 +1,4 @@
-﻿#ifndef MATERIAL_H
+#ifndef MATERIAL_H
 #define MATERIAL_H
 
 #include "hittable.h"
@@ -122,7 +122,6 @@ public:
 
 	scattered = ray(rec.p, direction, r_in.time()); // 굴절된 방향으로 레이 발사
 
-	// (임시) 무조건 굴절 하게 하기
 	return true;
     }
 };

@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #include "rtWeekend.h"
 #include "transformation_matrix.h"
 #include "scene_info.h"
@@ -363,28 +363,73 @@ void scene9(hittable_list& world, camera& cam) {
     world.add(obj3);
 }
 
+void microstructure(hittable_list& world, camera& cam) {
+    cam.background = color(0.16, 0.21, 0.66);
+    cam.vfov = 40;
+    cam.lookfrom = point3(-2, 2, 2);
+
+    std::string tile_111_path = "../res/microstructure/Tile1x1x1.obj";
+    std::string tile_222_path = "../res/microstructure/Tile2x2x2.obj";
+    std::string tile_444_path = "../res/microstructure/Tile4x4x4.obj";
+
+    auto mat_red = make_shared<lambertian>(color(1.0, 0.0, 0.0));
+    auto material_metal1 = make_shared<metal>(color(0.3, 0.6, 0.8), 1.0);
+    auto material_metal2 = make_shared<metal>(color(0.8, 0.6, 0.2), 0.4);
+    auto material_dielectric = make_shared<dielectric>(1.50);
+    //auto mat_light = make_shared<diffuse_light>(color(20, 20, 20));
+
+    auto tile_111 = make_shared<transform>(
+        make_shared<polygon_mesh>(tile_111_path, material_metal1),
+        point3(-1, 0, 0)
+    );
+    //world.add(tile_111);
+
+    auto tile_222 = make_shared<transform>(
+        make_shared<polygon_mesh>(tile_222_path, material_metal1),
+        point3(-1, 0, 0)
+    );
+    //world.add(tile_222);
+
+    auto tile_444 = make_shared<transform>(
+        make_shared<polygon_mesh>(tile_444_path, material_metal1),
+        point3(-1, 0, 0)
+    );
+    world.add(tile_444);
+
+    //auto emit = make_shared<transform>(
+    //    make_shared<quad>(
+    //        point3(-0.5, 1.99, -.25),
+    //        vec3(1.0, 0, 0),
+    //        vec3(0, 0, -1.0),
+    //        mat_light
+    //    ),
+    //    point3(-1, 2, 0)
+    //);
+    //world.add(emit);
+}
+
 int main() {
     // 카메라
     camera cam;
     cam.aspect_ratio = 1.0;
     cam.image_width = 2048;
-    cam.samples_per_pixel = 10;
+    cam.samples_per_pixel = 100;
     cam.max_depth = 10;
     cam.background = color(0, 0, 0);
 
     cam.vfov = 70;
-    cam.lookfrom = point3(0, 5, 20); // scene 5
-    cam.lookat = point3(0, 4, 0);
+    cam.lookfrom = point3(0, 0, 5);
+    cam.lookat = point3(0, 0, 0);
     cam.vup = vec3(0, 1, 0);
 
-    cam.defocus_angle = 10.0;
+    cam.defocus_angle = 0.0;
     cam.focus_dist = 3;
 
     // 월드
     hittable_list world; // 모든 hittable한 오브젝트를 저장
 
     // 불러올 씬
-    scene9(world, cam);
+    microstructure(world, cam);
 
     // 월드 공간 BVH
     world = hittable_list(make_shared<bvh_node>(world));
