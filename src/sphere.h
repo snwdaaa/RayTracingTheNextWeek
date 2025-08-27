@@ -1,18 +1,18 @@
-﻿#ifndef SPHERE_H
+#ifndef SPHERE_H
 #define SPHERE_H
 
-#include "hittable.h"
+#include "Hittable.h"
 
 // 구 클래스
-class sphere : public hittable {
+class Sphere : public Hittable {
 private:
-    ray center;
+    Ray center;
     double radius;
-    shared_ptr<material> mat;
-    aabb bbox;
+    shared_ptr<Material> mat;
+    AABB bbox;
 
     // 구면 좌표계의 좌표를 uv 좌표계의 좌표로 변환
-    static void get_sphere_uv(const point3& p, double& u, double& v) {
+    static void GetSphereUV(const Point3& p, double& u, double& v) {
         // p: 원점이 중심인 단위 구 위의 한 점
         // u: x=-1부터 y축을 두르면서(가로) 생기는 각 (범위: [0,1])
         // v: y=-1부터 y=1 사이의(세로) 각 (범위: [0,1])
@@ -28,46 +28,46 @@ private:
     }
 public:
     // 정적인 Sphere
-    sphere(double radius, shared_ptr<material> mat)
-        : center(point3(0, 0, 0), vec3(0, 0, 0)),
+    Sphere(double radius, shared_ptr<Material> mat)
+        : center(Point3(0, 0, 0), Vec3(0, 0, 0)),
         radius(std::fmax(0, radius)),
         mat(mat)
     {
-        auto rvec = vec3(radius, radius, radius);
-        //bbox = aabb(center - rvec, center + rvec);
-        auto ray_origin = center.origin();
-        bbox = aabb(ray_origin - rvec, ray_origin + rvec);
+        auto rvec = Vec3(radius, radius, radius);
+        //bbox = AABB(center - rvec, center + rvec);
+        auto rayOrigin = center.GetOrigin();
+        bbox = AABB(rayOrigin - rvec, rayOrigin + rvec);
     }
 
-    sphere(const point3& static_center, double radius, shared_ptr<material> mat) 
-        : center(static_center, vec3(0, 0, 0)), 
+    Sphere(const Point3& staticCenter, double radius, shared_ptr<Material> mat) 
+        : center(staticCenter, Vec3(0, 0, 0)), 
         radius(std::fmax(0, radius)),
         mat(mat) 
     {
-        auto rvec = vec3(radius, radius, radius);
-        //bbox = aabb(center - rvec, center + rvec);
-        auto ray_origin = center.origin();
-        bbox = aabb(ray_origin - rvec, ray_origin + rvec);
+        auto rvec = Vec3(radius, radius, radius);
+        //bbox = AABB(center - rvec, center + rvec);
+        auto rayOrigin = center.GetOrigin();
+        bbox = AABB(rayOrigin - rvec, rayOrigin + rvec);
     }
 
     // 움직이는 Sphere
-    sphere(const point3& center1, const point3& center2, double radius,
-        shared_ptr<material> mat)
+    Sphere(const Point3& center1, const Point3& center2, double radius,
+        shared_ptr<Material> mat)
         : center(center1, center2 - center1),
         radius(std::fmax(0, radius)),
         mat(mat)
     {
-        auto rvec = vec3(radius, radius, radius);
-        bbox = aabb(center1 - rvec, center2 + rvec);
+        auto rvec = Vec3(radius, radius, radius);
+        bbox = AABB(center1 - rvec, center2 + rvec);
     }
 
-    bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
+    bool Hit(const Ray& r, Interval ray_t, HitRecord& rec) const override {
         // 구의 중심을 입력받은 레이가 부딪히는 시점의 시각 값으로 구함
-        point3 current_center = center.at(r.time());
-        vec3 oc = current_center - r.origin(); // C-Q
-        auto a = r.direction().length_squared(); // d dot d == |d|^2
-        auto h = dot(r.direction(), oc); // h = d dot (C-Q)
-        auto c = oc.length_squared() - radius * radius; // (C-Q) dot (C-Q) - r^2 = |(C-Q)|^2 - r^2
+        Point3 currentCenter = center.At(r.GetTime());
+        Vec3 oc = currentCenter - r.GetOrigin(); // C-Q
+        auto a = r.GetDirection().GetLengthSquared(); // d dot d == |d|^2
+        auto h = Dot(r.GetDirection(), oc); // h = d dot (C-Q)
+        auto c = oc.GetLengthSquared() - radius * radius; // (C-Q) dot (C-Q) - r^2 = |(C-Q)|^2 - r^2
         auto discriminant = h*h - a*c; // 판별식 h^2 - a*c
     
         if (discriminant < 0) {
@@ -78,25 +78,25 @@ public:
 
         // tmin ~ tmax 사이에서 가장 가까운 교차 지점 찾기
         auto root = (h - sqrtd) / a; // 이차방정식 근의 공식 -> +-라서 실근이 두 개 나오는데, 먼저 -부터 판별
-        if (!ray_t.surrounds(root)) { // -로 판별한 실근이 범위를 벗어나는 경우
+        if (!ray_t.Surrounds(root)) { // -로 판별한 실근이 범위를 벗어나는 경우
             root = (h + sqrtd) / a; // +로 실근 판별
-            if (!ray_t.surrounds(root))
+            if (!ray_t.Surrounds(root))
                 return false; // +- 둘 다 범위 벗어나는거면 실근 없음 -> 충돌 X
         }
 
-        // 충돌 정보는 hit_record 객체에 레퍼런스로 전달
+        // 충돌 정보는 HitRecord 객체에 레퍼런스로 전달
         rec.t = root;
-        rec.p = r.at(rec.t);
+        rec.p = r.At(rec.t);
         rec.mat = mat;
-        vec3 outward_normal = (rec.p - current_center) / radius;
-        rec.set_face_normal(r, outward_normal); // 법선 벡터 방향 결정
-        get_sphere_uv(to_point3(outward_normal), rec.u, rec.v);
+        Vec3 outwardNormal = (rec.p - currentCenter) / radius;
+        rec.SetFaceNormal(r, outwardNormal); // 법선 벡터 방향 결정
+        GetSphereUV(ToPoint3(outwardNormal), rec.u, rec.v);
 
         return true; // 충돌 O
     }
 
     // 구 바운딩 박스
-    aabb bounding_box() const override { return bbox; }
+    AABB BoundingBox() const override { return bbox; }
 };
 
 #endif

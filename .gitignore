@@ -475,3 +475,4 @@ FodyWeavers.xsd
 # 출력 이미지
 RaytracingNextWeekend/image.ppm
 /RaytracingNextWeekend
+*.ppm
