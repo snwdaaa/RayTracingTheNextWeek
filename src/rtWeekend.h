@@ -1,4 +1,4 @@
-﻿#ifndef RTWEEKEND_H
+#ifndef RTWEEKEND_H
 #define RTWEEKEND_H
 
 #include <cmath>
@@ -26,32 +26,32 @@ const double pi = 3.1415926535897932385;
 // 유틸리티 함수
 
 // 도 -> 라디안 변환
-inline double degrees_to_radians(double degrees) {
+inline double DegreesToRadians(double degrees) {
     return degrees * pi / 180.0f;
 }
 
-inline double random_double() {
+inline double GetRandomDouble() {
     // [0,1)에서 랜덤한 실수 리턴
     return std::rand() / (RAND_MAX + 1.0); // 1이 되지 않게 하기 위해 + 1.0
 }
 
-inline double random_double(double min, double max) {
+inline double GetRandomDouble(double min, double max) {
     // [min, max)에서 랜덤한 실수 리턴
-    return min + (max - min) * random_double();
+    return min + (max - min) * GetRandomDouble();
 }
 
-inline int random_int(int min, int max) {
+inline int GetRandomInt(int min, int max) {
     // [min, max]에서 랜덤한 정수 리턴
     return min + (std::rand() % (max - min + 1));
 }
 
 // Common Header
 
-#include "vec3.h"
-#include "point3.h"
-#include "matrix4.h"
-#include "vec4.h"
-#include "color.h"
-#include "ray.h"
+#include "Vec3.h"
+#include "Point3.h"
+#include "Matrix4.h"
+#include "Vec4.h"
+#include "Color.h"
+#include "Ray.h"
 
 #endif

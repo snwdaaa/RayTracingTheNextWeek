@@ -18,82 +18,82 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\aabb.h">
+    <ClInclude Include="..\src\AABB.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\bvh.h">
+    <ClInclude Include="..\src\BVH.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\camera.h">
+    <ClInclude Include="..\src\Camera.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\color.h">
+    <ClInclude Include="..\src\Color.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\hittable.h">
+    <ClInclude Include="..\src\Hittable.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\hittable_list.h">
+    <ClInclude Include="..\src\HittableList.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\image_opener.h">
+    <ClInclude Include="..\src\ImageOpener.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\interval.h">
+    <ClInclude Include="..\src\Interval.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\material.h">
+    <ClInclude Include="..\src\Material.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\polygon_mesh.h">
+    <ClInclude Include="..\src\PolygonMesh.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\quad.h">
+    <ClInclude Include="..\src\Quad.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ray.h">
+    <ClInclude Include="..\src\Ray.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="..\src\rtw_stb_image.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\rtWeekend.h">
+    <ClInclude Include="..\src\RTWeekend.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\scene_info.h">
+    <ClInclude Include="..\src\SceneInfo.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\sphere.h">
+    <ClInclude Include="..\src\Sphere.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\texture.h">
+    <ClInclude Include="..\src\Texture.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\triangle.h">
+    <ClInclude Include="..\src\Triangle.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\vec3.h">
+    <ClInclude Include="..\src\Vec3.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="..\src\external\stb_image.h">
       <Filter>헤더 파일\external</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\matrix4.h">
+    <ClInclude Include="..\src\Matrix4.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\vec4.h">
+    <ClInclude Include="..\src\Vec4.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\transformation_matrix.h">
+    <ClInclude Include="..\src\TransformationMatrix.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\transform.h">
+    <ClInclude Include="..\src\Transform.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\point3.h">
+    <ClInclude Include="..\src\Point3.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\constant_medium.h">
+    <ClInclude Include="..\src\ConstantMedium.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -101,7 +101,7 @@
     <ClCompile Include="..\src\main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\scene_info.cpp">
+    <ClCompile Include="..\src\SceneInfo.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
