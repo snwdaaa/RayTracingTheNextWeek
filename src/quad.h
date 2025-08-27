@@ -1,7 +1,10 @@
 #ifndef QUAD_H
 #define QUAD_H
 
-#include "hittable.h"
+#include "Common.h"
+#include "Hittable.h"
+#include "AABB.h"
+#include "HittableList.h"
 
 class Quad : public Hittable {
 private:

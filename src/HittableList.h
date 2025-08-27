@@ -1,7 +1,9 @@
 #ifndef HITTABLE_LIST_H
 #define HITTABLE_LIST_H
 
+#include "Common.h"
 #include "Hittable.h"
+#include "AABB.h"
 
 #include <vector>
 

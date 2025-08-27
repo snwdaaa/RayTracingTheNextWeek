@@ -1,6 +1,11 @@
 #ifndef BVH_H
 #define BVH_H
 
+#include "Common.h"
+#include "Hittable.h"
+#include "HittableList.h"
+#include "AABB.h"
+
 class BVHNode : public Hittable {
 private:
     // 자식 노드 또는 primitive가 모두 포함된 bbox

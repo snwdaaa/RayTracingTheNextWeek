@@ -12,13 +12,29 @@
 // 픽셀 간 간격은 뷰포트의 해상도 크기에 따라 결정
 // 대부분 정사각형 픽셀 기준
 
+#include "common.h"
 #include "Hittable.h"
 #include "Material.h"
+#include "ImageOpener.h"
+
+// 초기화 후 GPU에 전달할 카메라 속성값들
+struct CameraProperties {
+	int imageWidth;
+	int imageHeight;
+	size_t bufferSize;
+	int maxDepth;
+	int samplesPerPixel;
+	double pixelSamplesScale;
+};
 
 class Camera {
 private:
+	// 렌더 시간 표시
+	std::chrono::system_clock::time_point start;
+
     int imageHeight;	    // 렌더 이미지 높이
     double pixelSamplesScale; // 픽셀 샘플의 누적합에 더할 Color scale factor
+	size_t bufferSize; // 이미지 버퍼 크기
     Point3 center;	    // 카메라 센터
     Point3 pixel00Loc;    // (0, 0) 픽셀의 위치
     Vec3 pixelDeltaU;	    // 뷰포트 오른쪽 가리키는 벡터
@@ -33,57 +49,6 @@ private:
 
     Vec3 defocusDiskU;    // Defocus 디스크 가로 반지름
     Vec3 defocusDiskV;    // Defocus 디스크 세로 반지름
-
-    void Initialize() {
-		// 이미지 높이 계산
-		imageHeight = int(imageWidth / aspectRatio);
-		imageHeight = (imageHeight < 1) ? 1 : imageHeight; // 높이 1 이상
-
-		pixelSamplesScale = 1.0 / samplesPerPixel;
-
-		// 카메라 속성
-		center = lookfrom;
-		//auto focal_length = (lookfrom - lookat).length();
-		auto theta = DegreesToRadians(vfov);
-		// tan(theta/2) = 뷰포트 높이 절반 / focal_length이므로
-		// 뷰포트 높이 절반을 구하려면 focal_length를 곱해줘야 함
-		// viweport_height는 전체 높이이므로 2를 추가적으로 곱해줌
-		auto h = std::tan(theta / 2);
-		//auto viewportHeight = 2.0 * h * focal_length;
-		auto viewportHeight = 2.0 * h * focusDist;
-
-		// viewportHeight 구할 때 이론적인 aspect ratio가 아닌
-		// 이미지의 aspect ratio를 사용
-		// truncation때문에 실제 이미지의 aspect ratio와 다를 수 있기 때문
-		auto viewportWidth = viewportHeight * (double(imageWidth) / imageHeight);
-
-		w = GetUnitVector(lookfrom - lookat);
-		u = GetUnitVector(Cross(vup, w));
-		v = Cross(w, u);
-
-		// 뷰포트 엣지 수직, 수평 벡터 계산
-		auto viewportU = viewportWidth * u; // 뷰포트 엣지 수평 벡터
-		auto viewportV = viewportHeight * -v; // 뷰포트 엣지 수직 벡터(아래로)
-
-		// 픽셀 사이 간격
-		pixelDeltaU = viewportU / imageWidth;
-		pixelDeltaV = viewportV / imageHeight;
-
-		// 왼쪽 위 픽셀 위치 계산
-		// 카메라 센터에서 focal_length만큼 앞으로 가서 뷰포트에 붙은 후
-		// 뷰포트 절반만큼 왼쪽으로 & 위쪽으로 이동하면 뷰포트 왼쪽 위에 위치함
-		auto viewportUpperLeft = center - (focusDist * w)
-			- viewportU / 2 - viewportV / 2;
-		// 각 픽셀 중심 -> 뷰포트 왼쪽 위에서 (u + v) 절반만큼 간 위치
-		pixel00Loc = viewportUpperLeft
-			+ 0.5 * (pixelDeltaU + pixelDeltaV);
-
-		// 카메라 defocus 디스크 가로, 세로 반지름 계산
-		auto defocusRadius = focusDist * std::tan(DegreesToRadians(
-			defocusAngle / 2));
-		defocusDiskU = u * defocusRadius;
-		defocusDiskV = v * defocusRadius;
-    }
 
     Color GetRayColor(const Ray& r, int depth, const Hittable& world) const {
 		// 최대 depth 이상으로 반사되지 않게 함
@@ -147,6 +112,10 @@ private:
 public:
     const std::string outputFilename = "image.ppm";
 
+	// 이미지 버퍼
+	unsigned char* dImageBuffer; // 디바이스 이미지 버퍼
+	unsigned char* hImageBuffer; // 호스트 이미지 버퍼
+
     double aspectRatio = 16.0 / 9.0; // 종횡비
     int imageWidth = 4096; // 가로 픽셀 개수
     int samplesPerPixel = 10; // 픽셀 당 랜덤 샘플 개수
@@ -158,21 +127,90 @@ public:
     Point3 lookat; // 카메라가 바라보는 곳
     Vec3 vup; // 카메라의 위쪽 방향
 
+	CameraProperties camProperties; // GPU에 전달할 카메라 정보 구조체
+
     // 디스크의 크기를 조절하는 각도
     // 값이 클 수록 조리개가 커져 블러 강해짐
     double defocusAngle = 0;
     double focusDist = 10; // 카메라에서 focus plane까지 거리
 
+	__host__ void Initialize() {
+		// 이미지 높이 계산
+		imageHeight = int(imageWidth / aspectRatio);
+		imageHeight = (imageHeight < 1) ? 1 : imageHeight; // 높이 1 이상
+
+		bufferSize = imageWidth * imageHeight * 3; // 너비 x 높이 x RGB채널
+
+		pixelSamplesScale = 1.0 / samplesPerPixel;
+
+		// 카메라 속성
+		center = lookfrom;
+		//auto focal_length = (lookfrom - lookat).length();
+		auto theta = DegreesToRadians(vfov);
+		// tan(theta/2) = 뷰포트 높이 절반 / focal_length이므로
+		// 뷰포트 높이 절반을 구하려면 focal_length를 곱해줘야 함
+		// viweport_height는 전체 높이이므로 2를 추가적으로 곱해줌
+		auto h = std::tan(theta / 2);
+		//auto viewportHeight = 2.0 * h * focal_length;
+		auto viewportHeight = 2.0 * h * focusDist;
+
+		// viewportHeight 구할 때 이론적인 aspect ratio가 아닌
+		// 이미지의 aspect ratio를 사용
+		// truncation때문에 실제 이미지의 aspect ratio와 다를 수 있기 때문
+		auto viewportWidth = viewportHeight * (double(imageWidth) / imageHeight);
+
+		w = GetUnitVector(lookfrom - lookat);
+		u = GetUnitVector(Cross(vup, w));
+		v = Cross(w, u);
+
+		// 뷰포트 엣지 수직, 수평 벡터 계산
+		auto viewportU = viewportWidth * u; // 뷰포트 엣지 수평 벡터
+		auto viewportV = viewportHeight * -v; // 뷰포트 엣지 수직 벡터(아래로)
+
+		// 픽셀 사이 간격
+		pixelDeltaU = viewportU / imageWidth;
+		pixelDeltaV = viewportV / imageHeight;
+
+		// 왼쪽 위 픽셀 위치 계산
+		// 카메라 센터에서 focal_length만큼 앞으로 가서 뷰포트에 붙은 후
+		// 뷰포트 절반만큼 왼쪽으로 & 위쪽으로 이동하면 뷰포트 왼쪽 위에 위치함
+		auto viewportUpperLeft = center - (focusDist * w)
+			- viewportU / 2 - viewportV / 2;
+		// 각 픽셀 중심 -> 뷰포트 왼쪽 위에서 (u + v) 절반만큼 간 위치
+		pixel00Loc = viewportUpperLeft
+			+ 0.5 * (pixelDeltaU + pixelDeltaV);
+
+		// 카메라 defocus 디스크 가로, 세로 반지름 계산
+		auto defocusRadius = focusDist * std::tan(DegreesToRadians(
+			defocusAngle / 2));
+		defocusDiskU = u * defocusRadius;
+		defocusDiskV = v * defocusRadius;
+
+		// GPU에 전달할 카메라 정보 구조체 초기화
+		camProperties = {
+			imageWidth,
+			imageHeight,
+			bufferSize,
+			maxDepth,
+			samplesPerPixel,
+			pixelSamplesScale
+		};
+	}
+
+	__host__ void StartTimer() {
+		start = std::chrono::system_clock::now();
+	}
+
+	__host__ void EndTimer() {
+		std::chrono::duration<double>sec = std::chrono::system_clock::now() - start;
+		std::cout << "Render time : " << sec.count() << "seconds" << std::endl;
+		std::clog << "\rDone                    \n";
+	}
+
     // 렌더 준비 & 렌더 루프 실행
-    void Render(const Hittable& world) {
-		Initialize(); // 초기화
+    __global__ void Render(const Hittable& world, CameraProperties cp) {
+		// pass-by-value로 전달하면 GPU로 알아서 복사됨 -> cudaMemcpy 불필요
 
-		std::ofstream out("image.ppm");
-		// ppm 파일 헤더 설정
-		out << "P3\n" << imageWidth << " " << imageHeight << "\n255\n";
-
-		// 렌더 시간 표시
-		std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
 		// 이미지를 저장해서 출력할 1차원 벡터
 		std::vector<Color>images(imageHeight * imageWidth);
 
@@ -191,17 +229,6 @@ public:
 				pixelColor *= pixelSamplesScale; // 평균 구하기
 				images[j * imageWidth + i] = pixelColor;
 			}
-		}
-
-		std::chrono::duration<double>sec = std::chrono::system_clock::now() - start;
-		std::cout << "Render time : " << sec.count() << "seconds" << std::endl;
-
-		// images 벡터에 색상 값 다 넣어놓고 한 번에 쓰기
-		WriteColor(images, out);
-
-		std::clog << "\rDone                    \n";
-
-		out.close();
-		OpenImage(outputFilename); // 이미지 자동 실행
+		}	
     }
 };

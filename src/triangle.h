@@ -1,7 +1,9 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
+#include "Common.h"
 #include "Hittable.h"
+#include "AABB.h"
 
 class Triangle : public Hittable {
 private:

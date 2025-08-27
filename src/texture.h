@@ -2,6 +2,7 @@
 #define TEXTURE_H
 
 #include "rtw_stb_image.h"
+#include "Common.h"
 
 // 텍스처 매핑 핵심 개념
 // 3D 표면점 -> 구면 좌표계 -> 텍스처 좌표계 -> 이미지 좌표계

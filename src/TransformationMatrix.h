@@ -1,6 +1,8 @@
 #ifndef TRANSFORMATION_H
 #define TRANSFORMATION_H
 
+#include "Common.h"
+
 // 변환 행렬 생성 클래스
 class TransformationMatrix {
 public:

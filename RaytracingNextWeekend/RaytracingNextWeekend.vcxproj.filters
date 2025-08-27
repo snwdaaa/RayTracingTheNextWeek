@@ -57,7 +57,7 @@
     <ClInclude Include="..\src\rtw_stb_image.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\RTWeekend.h">
+    <ClInclude Include="..\src\Common.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="..\src\SceneInfo.h">
@@ -98,11 +98,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\main.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\SceneInfo.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\src\main.cu">
+      <Filter>소스 파일</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>

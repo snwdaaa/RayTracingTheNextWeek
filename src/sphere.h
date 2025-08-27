@@ -1,7 +1,9 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
+#include "Common.h"
 #include "Hittable.h"
+#include "AABB.h"
 
 // 구 클래스
 class Sphere : public Hittable {

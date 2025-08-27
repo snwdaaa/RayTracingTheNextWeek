@@ -1,6 +1,11 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
+#include "Common.h"
+#include "Hittable.h"
+#include "AABB.h"
+#include "TransformationMatrix.h"
+
 class Transform : public Hittable {
 private:
     shared_ptr<Hittable> object;

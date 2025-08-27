@@ -1,6 +1,11 @@
 #ifndef POLYGON_MESH_H
 #define POLYGON_MESH_H
 
+#include "Common.h"
+#include "Hittable.h"
+#include "AABB.h"
+#include "SceneInfo.h"
+
 class TriangleFace {
 public:
     std::vector<int> face;

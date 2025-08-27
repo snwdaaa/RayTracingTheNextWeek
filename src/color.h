@@ -1,8 +1,8 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#include "Interval.h"
-#include "Vec3.h"
+#include "Common.h"
+#include "Camera.cuh"
 
 #include <fstream>
 #include <vector>
@@ -17,12 +17,26 @@ inline double LinearToGamma(double linearComponent) {
     return 0;
 }
 
-void WriteColor(std::vector<Color>& value, std::ofstream& out) {
-    for (auto& Color : value)
+void WriteColor(std::string fileName, unsigned char* renderedImage, 
+	CameraProperties& cp) 
+{
+	std::ofstream out(fileName);
+
+	// ppm 파일 헤더 설정
+	out << "P3\n" << cp.imageWidth << " " << cp.imageHeight << "\n255\n";
+
+	// 파일 쓰기
+    for (int i = 0; i < cp.imageWidth * cp.imageHeight * 3; i += 3)
     {
-		auto r = Color.GetX();
-		auto g = Color.GetY();
-		auto b = Color.GetZ();
+		Color pixelColor = Color(
+			*(renderedImage + i),
+			*(renderedImage + i + 1),
+			*(renderedImage + i + 2)
+		);
+
+		auto r = pixelColor.GetX();
+		auto g = pixelColor.GetY();
+		auto b = pixelColor.GetZ();
 
 		// 선형 공간 값을 Gamma 2로 감마 공간 값으로 바꿈
 		r = LinearToGamma(r);
@@ -38,6 +52,8 @@ void WriteColor(std::vector<Color>& value, std::ofstream& out) {
 		// 픽셀 컬러 컴포넌트 쓰기
 		out << rByte << " " << gByte << " " << bByte << "\n";
     }
+
+	out.close();
 }
 
 #endif

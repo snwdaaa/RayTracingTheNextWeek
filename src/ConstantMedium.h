@@ -1,6 +1,12 @@
 #ifndef CONSTANT_MEDIUM_H
 #define CONSTANT_MEDIUM_H
 
+#include "Common.h"
+#include "Hittable.h"
+#include "AABB.h"
+#include "Texture.h"
+#include "Material.h"
+
 class ConstantMedium : public Hittable {
 private:
     shared_ptr<Hittable> boundary;

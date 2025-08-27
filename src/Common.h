@@ -47,11 +47,16 @@ inline int GetRandomInt(int min, int max) {
 
 // Common Header
 
+// CUDA 헤더
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
+
 #include "Vec3.h"
 #include "Point3.h"
 #include "Matrix4.h"
 #include "Vec4.h"
 #include "Color.h"
 #include "Ray.h"
+#include "Interval.h"
 
 #endif

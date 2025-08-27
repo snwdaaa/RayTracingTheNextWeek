@@ -1,8 +1,6 @@
 #ifndef POINT3_H
 #define POINT3_H
 
-#include "Vec3.h"
-
 class Point3 {
 public:
     double e[3];

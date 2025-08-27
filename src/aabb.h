@@ -1,6 +1,8 @@
 #ifndef AABB_H
 #define AABB_H
 
+#include "Common.h"
+
 // 자식 노드 또는 primitive를 감싸는 Axis-Aligned Bounding Box
 class AABB {
 private:

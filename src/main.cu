@@ -1,10 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include "RTWeekend.h"
-#include "TransformationMatrix.h"
-#include "SceneInfo.h"
-#include "Interval.h"
-#include "AABB.h"
-#include "Hittable.h"
+
+#include "Common.h"
 #include "HittableList.h"
 #include "BVH.h"
 #include "Sphere.h"
@@ -13,10 +9,12 @@
 #include "Quad.h"
 #include "Transform.h"
 #include "ImageOpener.h"
-#include "Camera.h"
+#include "Camera.cuh"
 #include "Material.h"
 #include "Texture.h"
 #include "ConstantMedium.h"
+
+#define FILENAME "GPUOut.ppm" // 파일 이름
 
 void CornellBox(HittableList& world, Camera& cam) {
     auto matRed = make_shared<Lambertian>(Color(1.0, 0.0, 0.0));
@@ -408,6 +406,38 @@ void Microstructure(HittableList& world, Camera& cam) {
     //world.Add(emit);
 }
 
+void StartRender(HittableList& world, Camera& cam) {
+    cam.Initialize();
+
+    auto& cp = cam.camProperties;
+    size_t bufferSize = cp.imageWidth * cp.imageHeight * 3;
+    unsigned char* dRenderImage; // GPU
+    unsigned char* hRenderImage = new unsigned char[bufferSize]; // CPU
+    cudaMalloc(&dRenderImage, bufferSize); // 이미지 버퍼 사이즈만큼 GPU 메모리 할당
+    cudaMemset(dRenderImage, 0, bufferSize); // GPU 메모리 초기화
+
+    int blockSize = 16;
+    dim3 gridDim(
+        ceil((float)cp.imageWidth / blockSize), 
+        ceil((float)cp.imageHeight / blockSize)
+    );
+    dim3 blockDim(blockSize, blockSize);
+
+    cam.StartTimer();
+    cam.Render<<<gridDim, blockDim>>>(world, cp);
+    cam.EndTimer();
+
+    // 렌더 결과 복사
+    cudaMemcpy(hRenderImage, dRenderImage, bufferSize, cudaMemcpyDeviceToHost);
+    WriteColor(FILENAME, hRenderImage, cp);
+
+    // 메모리 해제
+    cudaFree(dRenderImage);
+    delete hRenderImage;
+
+    OpenImage(FILENAME); // 이미지 자동 실행
+}
+
 int main() {
     // 카메라
     Camera cam;
@@ -434,7 +464,7 @@ int main() {
     // 월드 공간 BVH
     world = HittableList(make_shared<BVHNode>(world));
 
-    cam.Render(world); // hittable_list에 있는 모든 물체에 대해 렌더링
+    StartRender(world, cam);
 
     std::clog << "\nRENDER INFO\n";
     std::clog << "Vertices: " << SceneInfo::vertices << "\n";
@@ -444,3 +474,29 @@ int main() {
     std::clog << "Samples Per Pixel: " << cam.samplesPerPixel << "\n";
     std::clog << "Ray Max Depth: " << cam.maxDepth << "\n";
 }
+
+__global__ void FillColor(unsigned char* image, int width, int height) {
+    // 각 스레드가 담당할 픽셀 위치
+    int x = blockDim.x * blockIdx.x + threadIdx.x;
+    int y = blockDim.y * blockIdx.y + threadIdx.y;
+
+    // 범위 검사
+    if (x >= width || y >= height) return;
+
+    int pixelIndex = (y * width + x) * 3;
+    image[pixelIndex] = 255; // R
+    image[pixelIndex + 1] = 255; // G
+    image[pixelIndex + 2] = 0; // B
+}
+
+//int main() {
+
+//    FillColor<<<gridDim, blockDim>>>(dImage, width, height);
+//
+//    cudaMemcpy(hImage, dImage, bufferSize, cudaMemcpyDeviceToHost);
+//
+//    Render(hImage, width, height);
+//
+//    cudaFree(dImage);
+//    delete hImage;
+//}

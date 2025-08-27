@@ -149,7 +149,7 @@
     <ClInclude Include="..\src\PolygonMesh.h" />
     <ClInclude Include="..\src\Quad.h" />
     <ClInclude Include="..\src\Ray.h" />
-    <ClInclude Include="..\src\RTWeekend.h" />
+    <ClInclude Include="..\src\Common.h" />
     <ClInclude Include="..\src\rtw_stb_image.h" />
     <ClInclude Include="..\src\SceneInfo.h" />
     <ClInclude Include="..\src\Sphere.h" />
@@ -161,7 +161,9 @@
     <ClInclude Include="..\src\Vec4.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\main.cpp" />
+    <CudaCompile Include="..\src\main.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
     <ClCompile Include="..\src\SceneInfo.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

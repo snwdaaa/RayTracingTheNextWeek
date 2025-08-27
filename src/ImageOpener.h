@@ -5,6 +5,8 @@
 #include <string>
 #include <cstdlib>
 
+#include "common.h"
+
 void OpenImage(const std::string& filename) {
     std::string command;
 
