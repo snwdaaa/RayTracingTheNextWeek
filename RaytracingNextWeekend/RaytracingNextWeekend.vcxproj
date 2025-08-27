@@ -135,7 +135,7 @@
   <ItemGroup>
     <ClInclude Include="..\src\AABB.h" />
     <ClInclude Include="..\src\BVH.h" />
-    <ClInclude Include="..\src\Camera.h" />
+    <CudaCompile Include="..\src\Camera.cuh" />
     <ClInclude Include="..\src\Color.h" />
     <ClInclude Include="..\src\ConstantMedium.h" />
     <ClInclude Include="..\src\external\stb_image.h" />
