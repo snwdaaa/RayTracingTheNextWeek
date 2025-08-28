@@ -12,7 +12,7 @@
 // 픽셀 간 간격은 뷰포트의 해상도 크기에 따라 결정
 // 대부분 정사각형 픽셀 기준
 
-#include "common.h"
+#include "Common.h"
 #include "Hittable.h"
 #include "Material.h"
 #include "ImageOpener.h"
@@ -208,18 +208,10 @@ public:
 	}
 
     // 렌더 준비 & 렌더 루프 실행
+	// pass-by-value로 전달하면 GPU로 알아서 복사됨 -> cudaMemcpy 불필요
     __global__ void Render(const Hittable& world, CameraProperties cp) {
-		// pass-by-value로 전달하면 GPU로 알아서 복사됨 -> cudaMemcpy 불필요
-
-		// 이미지를 저장해서 출력할 1차원 벡터
-		std::vector<Color>images(imageHeight * imageWidth);
-
-		// 위 -> 아래, 왼쪽 -> 오른쪽으로 그림
 		#pragma omp parallel for schedule(dynamic)
 		for (int j = 0; j < imageHeight; j++) {
-			// 남은 스캔 라인 표시
-			std::clog << "\rScanlines remaining: " << (imageHeight - j)
-			<< " / " << imageHeight << " " << std::flush;
 			for (int i = 0; i < imageWidth; i++) {
 				Color pixelColor(0, 0, 0);
 				for (int sample = 0; sample < samplesPerPixel; sample++) {

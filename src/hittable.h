@@ -1,6 +1,9 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
 
+#include "Common.h"
+#include "AABB.h"
+
 class Material;
 
 // Hit 정보

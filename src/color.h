@@ -18,15 +18,15 @@ inline double LinearToGamma(double linearComponent) {
 }
 
 void WriteColor(std::string fileName, unsigned char* renderedImage, 
-	CameraProperties& cp) 
+	int width, int height) 
 {
 	std::ofstream out(fileName);
 
 	// ppm 파일 헤더 설정
-	out << "P3\n" << cp.imageWidth << " " << cp.imageHeight << "\n255\n";
+	out << "P3\n" << width << " " << height << "\n255\n";
 
 	// 파일 쓰기
-    for (int i = 0; i < cp.imageWidth * cp.imageHeight * 3; i += 3)
+    for (int i = 0; i < width * height * 3; i += 3)
     {
 		Color pixelColor = Color(
 			*(renderedImage + i),

@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "Common.h"
+#include "Renderer.cuh"
 #include "HittableList.h"
 #include "BVH.h"
 #include "Sphere.h"
@@ -409,27 +410,36 @@ void Microstructure(HittableList& world, Camera& cam) {
 void StartRender(HittableList& world, Camera& cam) {
     cam.Initialize();
 
-    auto& cp = cam.camProperties;
+    CameraProperties& cp = cam.camProperties;
     size_t bufferSize = cp.imageWidth * cp.imageHeight * 3;
     unsigned char* dRenderImage; // GPU
     unsigned char* hRenderImage = new unsigned char[bufferSize]; // CPU
     cudaMalloc(&dRenderImage, bufferSize); // 이미지 버퍼 사이즈만큼 GPU 메모리 할당
     cudaMemset(dRenderImage, 0, bufferSize); // GPU 메모리 초기화
 
-    int blockSize = 16;
+    const int blockSize = 16;
     dim3 gridDim(
         ceil((float)cp.imageWidth / blockSize), 
         ceil((float)cp.imageHeight / blockSize)
     );
     dim3 blockDim(blockSize, blockSize);
 
+
+    // TODO: HittableList 안에 있는 모든 Hittable 객체를 꺼내서
+    // 모든 물체 정보를 가상함수가 없는 단순한 데이터 배열로 변경한 후
+    // 전달해야 함
+
+
+
     cam.StartTimer();
-    cam.Render<<<gridDim, blockDim>>>(world, cp);
+    // TODO: 단순 데이터 배열 모두 cudaMalloc, cudaMemcpy로 넘긴 후
+    // 해당 포인터 Render 커널 함수에 전달
+    Render<<<gridDim, blockDim>>>(cp.imageWidth, cp.imageHeight);
     cam.EndTimer();
 
     // 렌더 결과 복사
     cudaMemcpy(hRenderImage, dRenderImage, bufferSize, cudaMemcpyDeviceToHost);
-    WriteColor(FILENAME, hRenderImage, cp);
+    WriteColor(FILENAME, hRenderImage, cp.imageWidth, cp.imageHeight);
 
     // 메모리 해제
     cudaFree(dRenderImage);
@@ -488,15 +498,3 @@ __global__ void FillColor(unsigned char* image, int width, int height) {
     image[pixelIndex + 1] = 255; // G
     image[pixelIndex + 2] = 0; // B
 }
-
-//int main() {
-
-//    FillColor<<<gridDim, blockDim>>>(dImage, width, height);
-//
-//    cudaMemcpy(hImage, dImage, bufferSize, cudaMemcpyDeviceToHost);
-//
-//    Render(hImage, width, height);
-//
-//    cudaFree(dImage);
-//    delete hImage;
-//}
