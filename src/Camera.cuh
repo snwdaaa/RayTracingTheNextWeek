@@ -207,20 +207,5 @@ public:
 		std::clog << "\rDone                    \n";
 	}
 
-    // 렌더 준비 & 렌더 루프 실행
-	// pass-by-value로 전달하면 GPU로 알아서 복사됨 -> cudaMemcpy 불필요
-    __global__ void Render(const Hittable& world, CameraProperties cp) {
-		#pragma omp parallel for schedule(dynamic)
-		for (int j = 0; j < imageHeight; j++) {
-			for (int i = 0; i < imageWidth; i++) {
-				Color pixelColor(0, 0, 0);
-				for (int sample = 0; sample < samplesPerPixel; sample++) {
-					Ray r = GetRay(i, j); // 픽셀 정사각형 내에서 랜덤 샘플링
-					pixelColor += GetRayColor(r, maxDepth, world);
-				}
-				pixelColor *= pixelSamplesScale; // 평균 구하기
-				images[j * imageWidth + i] = pixelColor;
-			}
-		}	
-    }
+
 };

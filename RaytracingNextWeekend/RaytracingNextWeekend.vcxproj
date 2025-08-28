@@ -150,6 +150,7 @@
     <ClInclude Include="..\src\Quad.h" />
     <ClInclude Include="..\src\Ray.h" />
     <ClInclude Include="..\src\Common.h" />
+    <ClInclude Include="..\src\Renderer.cuh" />
     <ClInclude Include="..\src\rtw_stb_image.h" />
     <ClInclude Include="..\src\SceneInfo.h" />
     <ClInclude Include="..\src\Sphere.h" />
