@@ -14,22 +14,24 @@
 #include "Material.h"
 #include "Texture.h"
 #include "ConstantMedium.h"
+#include "MaterialManager.h"
+#include "GPUData.h"
 
 #define FILENAME "GPUOut.ppm" // 파일 이름
 
-void CornellBox(HittableList& world, Camera& cam) {
-    auto matRed = make_shared<Lambertian>(Color(1.0, 0.0, 0.0));
-    auto matGreen = make_shared<Lambertian>(Color(0.0, 1.0, 0.0));
-    auto matBlue = make_shared<Lambertian>(Color(0.0, 0.0, 1.0));
-    auto matWhite = make_shared<Lambertian>(Color(1.0, 1.0, 1.0));
-    auto matLight = make_shared<DiffuseLight>(Color(20, 20, 20));
+void CornellBox(HittableList& world, MaterialManager& matManager, Camera& cam) {
+    matManager.Add(make_shared<Lambertian>(Color(1.0, 0.0, 0.0)), "Red");
+    matManager.Add(make_shared<Lambertian>(Color(0.0, 1.0, 0.0)), "Green");
+    matManager.Add(make_shared<Lambertian>(Color(0.0, 0.0, 1.0)), "Blue");
+    matManager.Add(make_shared<Lambertian>(Color(1.0, 1.0, 1.0)), "White");
+    matManager.Add(make_shared<DiffuseLight>(Color(20, 20, 20)), "Light");
 
     auto left = make_shared<Transform>(
 	make_shared<Quad>(
 	    Point3(-2, -2, 2),
 	    Vec3(0, 0, -4),
 	    Vec3(0, 4, 0),
-	    matRed
+	    matManager.Get("Red")
 	)
     );
     world.Add(left);
@@ -39,7 +41,7 @@ void CornellBox(HittableList& world, Camera& cam) {
 	    Point3(2, -2, 2),
 	    Vec3(0, 0, -4),
 	    Vec3(0, 4, 0),
-	    matGreen
+        matManager.Get("Green")
 	)
     );
     world.Add(right);
@@ -49,7 +51,7 @@ void CornellBox(HittableList& world, Camera& cam) {
 	    Point3(-2, -2, 2),
 	    Vec3(4, 0, 0),
 	    Vec3(0, 0, -4),
-	    matWhite
+        matManager.Get("White")
 	)
     );
     world.Add(floor);
@@ -59,7 +61,7 @@ void CornellBox(HittableList& world, Camera& cam) {
 	    Point3(-2, 2, 2),
 	    Vec3(4, 0, 0),
 	    Vec3(0, 0, -4),
-	    matWhite
+        matManager.Get("White")
 	)
     );
     world.Add(ceil);
@@ -69,7 +71,7 @@ void CornellBox(HittableList& world, Camera& cam) {
 	    Point3(-2, -2, -2),
 	    Vec3(4, 0, 0),
 	    Vec3(0, 4, 0),
-	    matWhite
+        matManager.Get("White")
 	)
     );
     world.Add(back);
@@ -79,7 +81,7 @@ void CornellBox(HittableList& world, Camera& cam) {
 	    Point3(-0.5, 1.99, -.25),
 	    Vec3(1.0, 0, 0),
 	    Vec3(0, 0, -1.0),
-	    matLight
+        matManager.Get("Light")
 	),
 	Point3(0, 0, 1)
     );
@@ -310,25 +312,25 @@ void Scene8(HittableList& world, Camera& cam) {
     cam.vfov = 50;
 }
 
-void Scene9(HittableList& world, Camera& cam) {
-    CornellBox(world, cam);
+void Scene9(HittableList& world, MaterialManager& matManager, Camera& cam) {
+    CornellBox(world, matManager, cam);
 
     std::string bunnyPath = "../res/stanford-bunny.obj";
     std::string teapotPath = "../res/teapot.obj";
 
-    auto matWhite = make_shared<Lambertian>(Color(1.0, 1.0, 1.0));
-    auto materialMetal1 = make_shared<Metal>(Color(0.3, 0.6, 0.8), 1.0);
-    auto materialMetal2 = make_shared<Metal>(Color(0.8, 0.6, 0.2), 0.4);
-    auto materialDielectric = make_shared<Dielectric>(1.50);
+    matManager.Add(make_shared<Lambertian>(Color(1.0, 1.0, 1.0)), "White");
+    matManager.Add(make_shared<Metal>(Color(0.3, 0.6, 0.8), 1.0), "Metal1");
+    matManager.Add(make_shared<Metal>(Color(0.8, 0.6, 0.2), 0.4), "Metal2");
+    matManager.Add(make_shared<Dielectric>(1.50), "Dielectric");
 
     auto box1 = make_shared<Transform>(
-	    MakeBox(Point3(-0.9, 0.7, -2), Point3(0, -2, -1), matWhite),
+	    MakeBox(Point3(-0.9, 0.7, -2), Point3(0, -2, -1), matManager.Get("White")),
 	    Point3(0, 0, 0)
     );
     world.Add(box1);
 
     auto box2 = make_shared<Transform>(
-	    MakeBox(Point3(-0.1, -2, 0), Point3(0.9, -1, 1), matWhite),
+	    MakeBox(Point3(-0.1, -2, 0), Point3(0.9, -1, 1), matManager.Get("White")),
 	    Point3(0, 0, 0),
 	    Vec3(0, 30, 0),
 	    Vec3(1, 1, 1)
@@ -337,7 +339,7 @@ void Scene9(HittableList& world, Camera& cam) {
 
     auto box3 = make_shared<Transform>(
 	    make_shared<ConstantMedium>(
-	        MakeBox(Point3(-0.1, -2, 0), Point3(0.9, -1, 1), matWhite),
+	        MakeBox(Point3(-0.1, -2, 0), Point3(0.9, -1, 1), matManager.Get("White")),
 	        0.1,
 	        Color(0, 0, 0)
 	    ),
@@ -348,13 +350,13 @@ void Scene9(HittableList& world, Camera& cam) {
     world.Add(box3);
 
     auto sphere1 = make_shared<Transform>(
-	    make_shared<Sphere>(Point3(0, 0, 0), 0.5, materialDielectric),
+	    make_shared<Sphere>(Point3(0, 0, 0), 0.5, matManager.Get("Dielectric")),
 	    Point3(-1, -1.5, 1)
     );
     world.Add(sphere1);
 
     auto obj3 = make_shared<Transform>(
-	    make_shared<PolygonMesh>(bunnyPath, materialMetal2),
+	    make_shared<PolygonMesh>(bunnyPath, matManager.Get("Metal2")),
 	    Point3(0.7, -1.2, 0),
 	    Vec3(0, -15, 0),
 	    Vec3(4, 4, 4)
@@ -362,7 +364,7 @@ void Scene9(HittableList& world, Camera& cam) {
     world.Add(obj3);
 }
 
-void Microstructure(HittableList& world, Camera& cam) {
+void Microstructure(HittableList& world, MaterialManager& matManager, Camera& cam) {
     cam.background = Color(0.16, 0.21, 0.66);
     cam.vfov = 40;
     cam.lookfrom = Point3(-2, 2, 2);
@@ -371,26 +373,26 @@ void Microstructure(HittableList& world, Camera& cam) {
     std::string tile222Path = "../res/microstructure/Tile2x2x2.obj";
     std::string tile444Path = "../res/microstructure/Tile4x4x4.obj";
 
-    auto matRed = make_shared<Lambertian>(Color(1.0, 0.0, 0.0));
-    auto materialMetal1 = make_shared<Metal>(Color(0.3, 0.6, 0.8), 1.0);
-    auto materialMetal2 = make_shared<Metal>(Color(0.8, 0.6, 0.2), 0.4);
-    auto materialDielectric = make_shared<Dielectric>(1.50);
+    matManager.Add(make_shared<Lambertian>(Color(1.0, 0.0, 0.0)), "Red");
+    matManager.Add(make_shared<Metal>(Color(0.3, 0.6, 0.8), 1.0), "Metal1");
+    matManager.Add(make_shared<Metal>(Color(0.8, 0.6, 0.2), 0.4), "Metal2");
+    matManager.Add(make_shared<Dielectric>(1.50), "Dielectric");
     //auto mat_light = make_shared<DiffuseLight>(Color(20, 20, 20));
 
     auto tile111 = make_shared<Transform>(
-        make_shared<PolygonMesh>(tile111Path, materialMetal1),
+        make_shared<PolygonMesh>(tile111Path, matManager.Get("Metal1")),
         Point3(-1, 0, 0)
     );
     //world.Add(tile111);
 
     auto tile222 = make_shared<Transform>(
-        make_shared<PolygonMesh>(tile222Path, materialMetal1),
+        make_shared<PolygonMesh>(tile222Path, matManager.Get("Metal1")),
         Point3(-1, 0, 0)
     );
     //world.Add(tile222);
 
     auto tile444 = make_shared<Transform>(
-        make_shared<PolygonMesh>(tile444Path, materialMetal1),
+        make_shared<PolygonMesh>(tile444Path, matManager.Get("Metal1")),
         Point3(-1, 0, 0)
     );
     world.Add(tile444);
@@ -405,6 +407,29 @@ void Microstructure(HittableList& world, Camera& cam) {
     //    Point3(-1, 2, 0)
     //);
     //world.Add(emit);
+}
+
+// ----------------------------------------------
+
+// Hittable 객체와 머티리얼을 GPU가 처리할 수 있는 형태로 변환
+void FlattenScene(
+    const HittableList& world,
+    std::vector<GPUHittable>& gpuHittables,
+    std::vector<GPUMaterial>& gpuMaterials
+) {
+    // Loop 1: 모든 머티리얼 -> GPU-Friendly하게 변환
+    // TODO
+    //for (auto obj : world.objects) {
+    //    auto mat = obj->GetMaterial();
+
+    //    // enum 설정
+    //    
+
+    //    gpuMaterials.push_back({
+
+    //    });
+    //}
+
 }
 
 void StartRender(HittableList& world, Camera& cam) {
@@ -428,8 +453,10 @@ void StartRender(HittableList& world, Camera& cam) {
     // TODO: HittableList 안에 있는 모든 Hittable 객체를 꺼내서
     // 모든 물체 정보를 가상함수가 없는 단순한 데이터 배열로 변경한 후
     // 전달해야 함
-
-
+    // GPU에 전달할 Hittable, Material 정보 배열
+    std::vector<GPUHittable> gpuHittables;
+    std::vector<GPUMaterial> gpuMaterials;
+    FlattenScene(world, gpuHittables, gpuMaterials);
 
     cam.StartTimer();
     // TODO: 단순 데이터 배열 모두 cudaMalloc, cudaMemcpy로 넘긴 후
@@ -467,9 +494,10 @@ int main() {
 
     // 월드
     HittableList world; // 모든 hittable한 오브젝트를 저장
+    MaterialManager matManager;
 
     // 불러올 씬
-    Microstructure(world, cam);
+    Microstructure(world, matManager, cam);
 
     // 월드 공간 BVH
     world = HittableList(make_shared<BVHNode>(world));

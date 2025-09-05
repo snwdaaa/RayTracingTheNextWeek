@@ -261,6 +261,8 @@ public:
 
     AABB BoundingBox() const override { return bbox; }
 
+	shared_ptr<Material> GetMaterial() const override { return mat; }
+
     // 모든 면의 bbox 미리 계산
     AABB MakeTriangleBbox(const int& v0_idx, const int& v1_idx, const int& v2_idx) {
 		// x, y, z 길이 -> 세 정점 각 성분의 min, max -> interval 구하기

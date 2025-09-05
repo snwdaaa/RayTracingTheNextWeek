@@ -99,6 +99,8 @@ public:
 
     // 구 바운딩 박스
     AABB BoundingBox() const override { return bbox; }
+
+    shared_ptr<Material> GetMaterial() const override { return mat; }
 };
 
 #endif

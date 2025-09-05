@@ -38,6 +38,8 @@ public:
 
     AABB BoundingBox() const override { return bbox; };
 
+	shared_ptr<Material> GetMaterial() const override { return mat; }
+
     bool Hit(const Ray& r, Interval ray_t, HitRecord& rec) const override {
 		auto denominator = Dot(normal, r.GetDirection()); // t 구하는 식의 분모
 

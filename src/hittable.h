@@ -35,6 +35,8 @@ public:
     virtual bool Hit(const Ray& r, Interval ray_t, HitRecord& rec) const = 0;
     // 오브젝트의 바운딩 박스 리턴하는 메서드
     virtual AABB BoundingBox() const = 0;
+    // 물체의 머티리얼 리턴하는 메서드
+    virtual shared_ptr<Material> GetMaterial() const = 0;
 };
 
 #endif
